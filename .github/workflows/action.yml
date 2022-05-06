@@ -23,13 +23,12 @@ jobs:
       - name: Clone GitHub repository
         run: |
           git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
-          pwd
-          cd PyPupilEXT
-          ls -l
-          cd ${{ github.workspace }}
-          pwd
 
-      - name: Get latest Cmake and ninja
+      - name: Install system packages (macOS)
+        run: |
+          brew install nasm
+
+      - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
 
       - uses: actions/setup-python@v3
@@ -37,7 +36,7 @@ jobs:
           python-version: ${{ matrix.python_version }}
           architecture: x64
 
-      - name: Restore artifacts, or setup vcpkg (do not install any package)
+      - name: Restore artifacts, or setup vcpkg (All-Systems)
         uses: lukka/run-vcpkg@v10
         with:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
@@ -45,15 +44,7 @@ jobs:
           runVcpkgInstall: false
           vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3"
 
-      - name: Get files in current directory
-        run: |
-          cd PyPupilEXT
-          ls -l
-          which cmake
-          cmake --version
-          python --version
-
-      - name: Install build requirements
+      - name: Install python build requirements (All-Systems)
         run: |
           python -m pip install --upgrade pip
           python -m pip install wheel
@@ -62,7 +53,7 @@ jobs:
           python -m pip install ninja
           python -m pip install cmake
 
-      - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
+      - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }} (All-Systems)
         run: |
           cd PyPupilEXT
           python setup.py bdist_wheel
