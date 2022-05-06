@@ -49,7 +49,6 @@ jobs:
           ls -l
           which cmake
           cmake --version
-          git submodule status
           python --version
 
       - name: Install build requirements
