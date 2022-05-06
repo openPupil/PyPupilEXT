@@ -26,8 +26,8 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
           pwd
-          ls -l
           cd PyPupilEXT
+          ls -l
 
       - name: Get latest Cmake and ninja
         uses: lukka/get-cmake@latest
