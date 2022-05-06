@@ -1,0 +1,61 @@
+on:
+  push:
+    branches-ignore:
+      - "**"
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-10.15]
+        python_version: ["3.7"]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: openPupil/PyPupilEXT
+          submodules: "true"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest Cmake and ninja
+        uses: lukka/get-cmake@latest
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python_version }}
+          architecture: x64
+
+      - name: Restore artifacts, or setup vcpkg (do not install any package)
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgDirectory: "${{ github.workspace }}/3rdparty/vcpkg"
+          vcpkgJsonGlob: "**/vcpkg.json"
+          runVcpkgInstall: false
+
+      - name: Get files in current directory
+        run: |
+          ls -l
+          which cmake
+          cmake --version
+          git submodule status
+          python --version
+
+      - name: Install build requirements
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install wheel
+          python -m pip install numpy
+          python -m pip install setuptools
+          python -m pip install ninja
+          python -m pip install cmake
+
+      - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
+        run: |
+          python setup.py bdist_wheel
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl

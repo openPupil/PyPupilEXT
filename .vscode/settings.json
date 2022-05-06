@@ -1,0 +1,6 @@
+{
+    "python.formatting.provider": "autopep8",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-action.json": "file:///Users/papillonmac/Documents/GitHub_Repos/PyPupilEXT/.github/workflows/action.yml"
+    }
+}

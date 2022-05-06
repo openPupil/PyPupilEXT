@@ -1,0 +1,62 @@
+{
+    "name": "pypupilext",
+    "port-version": 1,
+    "version-string": "0.0.1.",
+    "homepage": "https://github.com/openPupil/PyPupilEXT",
+    "description": "Python implementation of a open-source pupillometry system called PupilEXT.",
+    "dependencies": [
+        {
+            "name": "pybind11",
+            "version>=": "2.6.0#3"
+        },
+        {
+            "name": "boost-math",
+            "version>=": "1.75.0"
+        },
+        {
+            "name": "boost-foreach",
+            "version>=": "1.75.0"
+        },
+        {
+            "name": "boost-range",
+            "version>=": "1.75.0"
+        },
+        {
+            "name": "boost-iterator",
+            "version>=": "1.75.0"
+        },
+        {
+            "name": "boost-config",
+            "version>=": "1.75.0"
+        },
+        {
+            "name": "boost-fusion",
+            "version>=": "1.75.0"
+        },
+        {
+            "name": "eigen3",
+            "version>=": "3.3.9"
+        },
+        {
+            "name": "tbb",
+            "version>=": "2020_U3"
+        },
+        {
+            "name": "ceres",
+            "version>=": "2.0.0#3"
+        },
+        {
+            "name": "opencv",
+            "version>=": "4.5.1",
+            "features": [
+                "dnn",
+                "jpeg",
+                "png",
+                "quirc",
+                "tiff",
+                "ffmpeg"
+            ]
+        }
+    ],
+    "builtin-baseline": "3426db05b996481ca31e95fff3734cf23e0f51bc"
+}
