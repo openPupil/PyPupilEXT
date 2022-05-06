@@ -22,7 +22,7 @@ jobs:
 
       - name: Clone GitHub repository
         run: |
-          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
+          git clone https://github.com/openPupil/PyPupilEXT
           pwd
           cd PyPupilEXT
           ls -l
