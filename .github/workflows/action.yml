@@ -22,10 +22,12 @@ jobs:
 
       - name: Clone GitHub repository
         run: |
-          git clone https://github.com/openPupil/PyPupilEXT
+          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
           pwd
           cd PyPupilEXT
           ls -l
+          cd ${{ github.workspace }}
+          pwd
 
       - name: Get latest Cmake and ninja
         uses: lukka/get-cmake@latest
@@ -41,6 +43,7 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
+          vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3"
 
       - name: Get files in current directory
         run: |
