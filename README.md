@@ -26,7 +26,7 @@ Coming soon. Currently, you need to build your own wheel files to use PyPupilEXT
 **Step 1:** Clone this repository with the included submodule.
 
 ```shell
-git clone --recurse-submodules https://github.com/openPupil/Open-PupilEXT.git
+git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 ```
 
 The `--recurse-submodules` option is important, as vcpkg is a submodule. Without this option, the 3rdparty folder will not contain vcpkg packet manager.

@@ -1,7 +1,9 @@
 on:
   push:
-    branches-ignore:
-      - "**"
+    branches:
+      - master
+    #branches-ignore:
+    #  - "**"
 
 jobs:
   build_wheels:
@@ -14,11 +16,17 @@ jobs:
         python_version: ["3.7"]
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          repository: openPupil/PyPupilEXT
-          submodules: "true"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      #- uses: actions/checkout@v3
+      #  with:
+      #    repository: openPupil/PyPupilEXT
+      #    submodules: "true"
+      #    token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clone GitHub repository
+        run: |
+          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
+          ls -l
+          cd PyPupilEXT
 
       - name: Get latest Cmake and ninja
         uses: lukka/get-cmake@latest
