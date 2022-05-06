@@ -25,6 +25,7 @@ jobs:
       - name: Clone GitHub repository
         run: |
           git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
+          pwd
           ls -l
           cd PyPupilEXT
 
@@ -36,12 +37,12 @@ jobs:
           python-version: ${{ matrix.python_version }}
           architecture: x64
 
-      - name: Restore artifacts, or setup vcpkg (do not install any package)
-        uses: lukka/run-vcpkg@v10
-        with:
-          vcpkgDirectory: "${{ github.workspace }}/3rdparty/vcpkg"
-          vcpkgJsonGlob: "**/vcpkg.json"
-          runVcpkgInstall: false
+      #- name: Restore artifacts, or setup vcpkg (do not install any package)
+      #  uses: lukka/run-vcpkg@v10
+      #  with:
+      #    vcpkgDirectory: "${{ github.workspace }}/3rdparty/vcpkg"
+      #    vcpkgJsonGlob: "**/vcpkg.json"
+      #    runVcpkgInstall: false
 
       - name: Get files in current directory
         run: |
