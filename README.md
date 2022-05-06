@@ -23,7 +23,7 @@ Coming soon. Currently, you need to build your own wheel files to use PyPupilEXT
 
 #### B) Use the following steps if the provided wheel files are not working
 
-**Step B1:** Clone this repository with the included submodule.
+**Step 1:** Clone this repository with the included submodule.
 
 ```shell
 git clone --recurse-submodules https://github.com/openPupil/Open-PupilEXT.git
@@ -31,7 +31,7 @@ git clone --recurse-submodules https://github.com/openPupil/Open-PupilEXT.git
 
 The `--recurse-submodules` option is important, as vcpkg is a submodule. Without this option, the 3rdparty folder will not contain vcpkg packet manager.
 
-**Step B2:** Create a new python 3.7. environment on your machine.
+**Step 2:** Create a new python 3.7. environment on your machine.
 
 ```shell
 conda create -n pypupilenv python=3.7
@@ -44,7 +44,7 @@ python -m pip install --upgrade pip
 python -m pip install opencv-python
 ```
 
-**Step B3:** Create a wheel file from the source code to pip install the library.
+**Step 3:** Create a wheel file from the source code to pip install the library.
 
 In PyPupilEXT, the pupil detection algorithms are included as C++ files. Therefore, it is necessary to load different C++ libraries to build the pupil detection algorithms. This process is fully automated with vcpkg. You only need to open the PyPupilEXT folder and call a one-liner. Note that the build process will take a while because the C++ libs need to be downloaded and compiled.
 
@@ -147,7 +147,7 @@ print(pupil.outline_confidence)
 **Example 2:**  Run a pupil detection algorithm on an eye image and fit an ellipse around the pupil contour.
 
 ```python
-import pypupilext as pypupil
+import pypupilext as pp
 import cv2
 import pandas as pd
 import time
@@ -168,10 +168,10 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 
 img = cv2.imread("tests/1.bmp", cv2.IMREAD_GRAYSCALE)
 
-pupil = pypupil.Pupil()
+pupilClass = pp.Pupil()
 assert pupil.confidence == -1
 
-pure = pypupil.PuRe()
+pure = pp.PuRe()
 pure.maxPupilDiameterMM = 7
 
 im_reized = img
