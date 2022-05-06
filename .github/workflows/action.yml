@@ -62,6 +62,7 @@ jobs:
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
+          cd PyPupilEXT
           python setup.py bdist_wheel
 
       - uses: actions/upload-artifact@v2
