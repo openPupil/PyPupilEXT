@@ -44,7 +44,7 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
-          vcpkgGitCommitId: "a5d6d145164e82e67fbf91a4a30f98699d30de63" Newest one
+          vcpkgGitCommitId: "a5d6d145164e82e67fbf91a4a30f98699d30de63" #Newest one
       #    vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3" Use this
 
       # From https://github.com/esdandreu/python-extension-cpp/blob/main/.github/workflows/test.yml
