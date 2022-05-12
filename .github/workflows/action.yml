@@ -23,6 +23,8 @@ jobs:
       - name: Clone GitHub repository
         run: |
           git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
+          cd PyPupilEXT/3rdparty/vcpkg
+          git checkout a5d6d145164e82e67fbf91a4a30f98699d30de63
 
       - name: Install system packages (macOS)
         run: |
@@ -36,14 +38,20 @@ jobs:
           python-version: ${{ matrix.python_version }}
           architecture: x64
 
-      #- name: Restore artifacts, or setup vcpkg (All-Systems)
-      #  uses: lukka/run-vcpkg@v10
-      #  with:
-      #    vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
-      #    vcpkgJsonGlob: "**/vcpkg.json"
-      #    runVcpkgInstall: false
-      #    vcpkgGitCommitId: "a5d6d145164e82e67fbf91a4a30f98699d30de63" Newest one
+      - name: Restore artifacts, or setup vcpkg (All-Systems)
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
+          vcpkgJsonGlob: "**/vcpkg.json"
+          runVcpkgInstall: false
+          vcpkgGitCommitId: "a5d6d145164e82e67fbf91a4a30f98699d30de63" Newest one
       #    vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3" Use this
+
+      # From https://github.com/esdandreu/python-extension-cpp/blob/main/.github/workflows/test.yml
+      - name: Pre install vcpkg
+        run: |
+          ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/bootstrap-vcpkg.sh
+          ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/vcpkg install
 
       - name: Install python build requirements (All-Systems)
         run: |
