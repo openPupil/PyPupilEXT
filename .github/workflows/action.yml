@@ -51,7 +51,7 @@ jobs:
       - name: Pre install vcpkg
         run: |
           ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/bootstrap-vcpkg.sh
-          ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/vcpkg install
+          ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/vcpkg --manifest-root=${{ github.workspace }}/PyPupilEXT/ install
 
       - name: Install python build requirements (All-Systems)
         run: |
