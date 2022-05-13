@@ -63,7 +63,7 @@ class CMakeBuild(build_ext):
             '-DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake',
             '-DPython_NumPy_INCLUDE_DIR={}'.format(np.get_include())]
 
-        build_args = ['--config', cfg]
+        build_args = ['--config', cfg, ' -L/usr/local/opt/libomp/lib -I/usr/local/opt/libomp/include']
 
         if platform.system() == "Windows":
             cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(), extdir)]
