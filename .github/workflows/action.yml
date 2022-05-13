@@ -23,8 +23,6 @@ jobs:
       - name: Clone GitHub repository
         run: |
           git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
-          cd PyPupilEXT/3rdparty/vcpkg
-          git checkout 11be87ec561d9d70dc527afad886744fe149c2ce
 
       - name: Install system packages (macOS)
         run: |
@@ -44,8 +42,8 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
-          vcpkgGitCommitId: "11be87ec561d9d70dc527afad886744fe149c2ce" #Newest one
-      #    vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3" Use this
+          #vcpkgGitCommitId: "11be87ec561d9d70dc527afad886744fe149c2ce" #Newest one
+          vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3" #Use this
 
       # From https://github.com/esdandreu/python-extension-cpp/blob/main/.github/workflows/test.yml
       - name: Pre install vcpkg
