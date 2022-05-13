@@ -27,6 +27,8 @@ jobs:
       - name: Install system packages (macOS)
         run: |
           brew install nasm
+          brew install libomp
+          brew info libomp
 
       - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
