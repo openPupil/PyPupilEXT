@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-10.15]
+        os: [macOS-latest]
         python_version: ["3.7"]
 
     steps:
@@ -29,7 +29,6 @@ jobs:
           brew install nasm
           brew install libomp
           brew info libomp
-          xcode-select --install
 
       - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
