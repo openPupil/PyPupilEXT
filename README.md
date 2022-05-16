@@ -69,6 +69,8 @@ cd dist
 pip install PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl
 ```
 
+Now you can use the PyPupilEXT package in Python and proceed with the examples provided section two.
+
 #### C) The advanced way of installing PyPupilEXT if nothing works
 
 If the build process fails, it may be due to the setup.py file. In such a case, it could be useful to compile the C++ files manually. Firstly, you need to find the path to the C++ NumPy header, which is necessary during the compilation. For this, type the following in your shell
@@ -119,7 +121,7 @@ python -m pip install . -v
 
 ## 2. How to use PyPupilEXT (under construction)
 
-Pypupil contains the pupil detection algorithms Starburst [[1\]](#1), Swirski2D [[2\]](#2), ExCuSe [[3\]](#3), ElSe [[4\]](#4), PuRe [[5\]](#5), and PuReST [[6\]](#6). Each algorithm is implemented using the PupilDetectionMethod interface, exposing the function ``run`` and ``runWithConfidence`` for pupil detection on an image. The method ``runWithConfidence`` additionally applies an outline confidence measure in the range of [0, 1] on the pupil detection, accessible by the field pupil.outline_confidence.
+PyPupilEXT contains the pupil detection algorithms Starburst [[1\]](#1), Swirski2D [[2\]](#2), ExCuSe [[3\]](#3), ElSe [[4\]](#4), PuRe [[5\]](#5), and PuReST [[6\]](#6). Each algorithm is implemented using the PupilDetectionMethod interface, exposing the function ``run`` and ``runWithConfidence`` for pupil detection on an image. The method ``runWithConfidence`` additionally applies an outline confidence measure in the range of [0, 1] on the pupil detection, accessible by the field pupil.outline_confidence.
 
 The algorithms can be instantiated by creating objects of the classes ``ElSe, ExCuSe, PuRe, PuReST, Starburst, and Swirski2D``. Further image undistortion and stereo triangulation procedures are available in which a camera calibration from the [PupilEXT](https://github.com/openPupil/Open-PupilEXT) software platform is loaded and used to calculate undistorted images, or in the stereo camera case, a stereo triangulation of the physical pupil size.
 
@@ -153,6 +155,8 @@ print(pupil.outline_confidence)
 ```
 
 **Example 2:**  Run a pupil detection algorithm on an eye image and fit an ellipse around the pupil contour.
+
+For this example, you can use the provided test image in this repository in ``tests/1.bmp``. Note that if you use your own images, you need to adjust the parameters of the pupil detection algorithm to match your image resolution. For this, adjust the ``pure.maxPupilDiameterMM`` and ``pure.pure.minPupilDiameterMM`` appropriately. The ``pupil.outline_confidence`` value can be used as an estimate of how well the pupil fit worked. A value of 1 indicates a perfect ellipse fit around the pupil's contour. It is also possible to adjust the parameters of pupil detection algorithm in the GUI of PupilEXT (Link: [https://github.com/openPupil/Open-PupilEXT](https://github.com/openPupil/Open-PupilEXT)) and then transfer the values into your python script. 
 
 ```python
 import pypupilext as pp
