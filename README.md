@@ -4,7 +4,9 @@ This repository provides a python wrapper to the open-source pupillometry system
 
 The PyPupilEXT package is authored by Moritz Lode and Babak Zandi from the Technical University of Darmstadt.<br/>
 
-**Caution:** This project and its repository is under development and currently not intended for a wider public usage.<br/>
+**Caution:** This project and its repository is under development and currently in an experimental stage.<br/>
+
+**Contact:** Babak Zandi, Mail: zandi@lichttechnik.tu-darmstadt.de
 
 **Internal ToDo list**
 
