@@ -7,7 +7,7 @@
     "dependencies": [
         {
             "name": "pybind11",
-            "version>=": "2.6.0#3"
+            "version>=": "2.6.0"
         },
         {
             "name": "boost-math",
@@ -58,5 +58,15 @@
             ]
         }
     ],
-    "builtin-baseline": "3426db05b996481ca31e95fff3734cf23e0f51bc"
+    "builtin-baseline": "df40d1c476dc02d71b113e4a63c3a32b00ebb5bd",
+        "overrides": [
+        { "name": "boost-config", "version": "1.75.0" },
+        { "name": "boost-math", "version": "1.75.0" },
+        { "name": "boost-foreach", "version": "1.75.0" },
+        { "name": "boost-range", "version": "1.75.0" },
+        { "name": "boost-iterator", "version": "1.75.0" },
+        { "name": "boost-config", "version": "1.75.0" },
+        { "name": "boost-fusion", "version": "1.75.0" },
+        { "name": "pybind11", "version": "2.5.0" }
+    ]
 }

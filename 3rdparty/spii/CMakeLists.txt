@@ -155,8 +155,4 @@ include(CPack)
 
 add_subdirectory(thirdparty/meschach)
 add_subdirectory(data)
-add_subdirectory(benchmarks)
-add_subdirectory(examples)
-add_subdirectory(large_tests)
 add_subdirectory(source)
-add_subdirectory(tests)
