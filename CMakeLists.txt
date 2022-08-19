@@ -65,6 +65,8 @@ if(APPLE)
     #set(Qt5_DIR "/Users/${USER_NAME_MAC}/Qt/${QT_VERSION}/clang_64/lib/cmake/Qt5")
 
     set(VCPKG_TARGET_TRIPLET x64-osx CACHE STRING "")
+    set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "")
+    
 elseif(MSVC OR WIN32)
 	#set(PYLON_HOME "C:/Program Files/Basler/pylon 6/Development")
     #set(PYLON_INCLUDE_DIR "C:/Program Files/Basler/pylon 6/Development/include")
@@ -90,12 +92,12 @@ set(pybind11_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRI
 # ------------------------------------------------------------------------------------------------
 
 # This line is not needed as it will be defined in the setup.py file
-#set(Python_NumPy_INCLUDE_DIR "/Users/papillonmac/miniconda3/envs/TestENV/lib/python3.7/site-packages/numpy/core/include")
+#set(Python_NumPy_INCLUDE_DIR "/Users/papillonpro/opt/anaconda3/envs/pypupilenv/lib/python3.7/site-packages/numpy/core/include")
 #set(Python_NumPy_INCLUDE_DIR "C:/Users/PupilPC2.0/Anaconda3/envs/pypupilENV/lib/site-packages/numpy/core/include")
 
 # Using the find package commands ----------------------------------------------------------------
 find_package(OpenCV CONFIG REQUIRED)
-find_package(TBB CONFIG REQUIRED)
+find_package(TBB)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(Ceres CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)

@@ -67,6 +67,7 @@
         { "name": "boost-iterator", "version": "1.75.0" },
         { "name": "boost-config", "version": "1.75.0" },
         { "name": "boost-fusion", "version": "1.75.0" },
-        { "name": "pybind11", "version": "2.5.0" }
+        { "name": "pybind11", "version": "2.5.0" },
+        { "name": "opencv", "version": "4.5.1" }
     ]
 }
