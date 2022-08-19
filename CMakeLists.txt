@@ -66,7 +66,7 @@ if(APPLE)
 
     set(VCPKG_TARGET_TRIPLET x64-osx CACHE STRING "")
     set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "")
-    
+
 elseif(MSVC OR WIN32)
 	#set(PYLON_HOME "C:/Program Files/Basler/pylon 6/Development")
     #set(PYLON_INCLUDE_DIR "C:/Program Files/Basler/pylon 6/Development/include")
@@ -83,7 +83,6 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/build/vcpkg_in
 
 # Setting the module paths to the <package-name>config.cmake files for each lib -------------------
 set(OpenCV_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/opencv")
-set(TBB_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/tbb")
 set(Eigen3_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/eigen3")
 set(Ceres_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/ceres")
 set(glog_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/glog")
@@ -97,7 +96,6 @@ set(pybind11_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRI
 
 # Using the find package commands ----------------------------------------------------------------
 find_package(OpenCV CONFIG REQUIRED)
-find_package(TBB)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(Ceres CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
@@ -146,7 +144,6 @@ endif()
 
 # -------------------------------------------------------
 set(Boost_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
-set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 # -------------------------------------------------------
@@ -207,6 +204,36 @@ message(STATUS "--------------------- SPII manual mode ---------------------")
 endif()
 # -------------------------------------------------------
 
+
+# -------------------------------------------------------
+# Build TBB ---------------------------------------------
+message(STATUS "--------------------- TBB automatic mode ---------------------")
+set(TBB_LIB_NAME 3rdparty/oneTBB)
+
+add_subdirectory(${TBB_LIB_NAME})
+link_directories(${CMAKE_BINARY_DIR}/lib)
+#find_package(TBB CONFIG REQUIRED)
+
+include(ExternalProject)
+
+ExternalProject_Add(PREFIX ${PROJECT_SOURCE_DIR}
+SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
+TMP_DIR "3rdparty/oneTBB/"
+STAMP_DIR "3rdparty/oneTBB/"
+LOG_DIR "3rdparty/oneTBB/"
+BINARY_DIR "3rdparty/oneTBB/"
+INSTALL_DIR "3rdparty/oneTBB/"
+CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DCMAKE_OSX_ARCHITECTURES=x86_64
+)
+
+set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") #Setting the module paths to the <package-name>config.cmake files for each lib
+set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/include/")
+find_package(TBB COMPONENTS tbb)
+# -------------------------------------------------------
+# -------------------------------------------------------
+
+
+
 # Output of initial values -----------------------------------------------
 message("----- Output of ENDING values -----")
 message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
@@ -253,7 +280,10 @@ message(STATUS "--- Include directories ---" )
 
 message(STATUS " OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 message(STATUS " Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
-message(STATUS " tbb_INCLUDE_DIR: ${TBB_INCLUDE_DIR}")
+message(STATUS " TBB_INCLUDE_DIR: ${TBB_INCLUDE_DIR}")
+message(STATUS " TBB_LIB_DIR 1: ${TBB_LIBS}")
+message(STATUS " TBB_LIB_DIR 2: ${TBB_LIBRARIES}")
+
 message(STATUS " spii_INCLUDE_DIR: ${spii_INCLUDE_DIR}")
 message(STATUS " EIGEN_INCLUDE_DIR: ${EIGEN_INCLUDE_DIR}")
 message(STATUS " CERES_INCLUDE_DIRS: ${CERES_INCLUDE_DIRS}")
