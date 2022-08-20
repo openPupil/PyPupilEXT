@@ -61,7 +61,9 @@ class CMakeBuild(build_ext):
             '-DEXAMPLE_VERSION_INFO={}'.format(self.distribution.get_version()),
             '-DCMAKE_BUILD_TYPE={}'.format(cfg),  # not used on MSVC, but no harm
             '-DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake',
-            '-DPython_NumPy_INCLUDE_DIR={}'.format(np.get_include())]
+            '-DPython_NumPy_INCLUDE_DIR={}'.format(np.get_include()),
+            '-DTBB_TEST=OFF',
+            '-DBUILD_SHARED_LIBS=OFF']
 
         build_args = ['--config', cfg]
 

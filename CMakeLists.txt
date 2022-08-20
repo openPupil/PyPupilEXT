@@ -55,6 +55,8 @@ message(STATUS "--------------------------------------------------------" )
 
 # The VCPKG_TARGET_TRIPLET should be commented out if you already set it during the cmake call in the settings.json
 if(APPLE)
+    message(STATUS "--------------------- SYSTEM MACOSX ---------------------")
+
 	#set(PYLON_HOME "/Library/Frameworks/pylon.framework")
     #set(PYLON_INCLUDE_DIR ${PYLON_INCLUDE_DIR} "/Library/Frameworks/pylon.framework/Headers")
     #set(PYLON_INCLUDE_DIR ${PYLON_INCLUDE_DIR} "/Library/Frameworks/pylon.framework/Headers/GenICam")
@@ -67,13 +69,65 @@ if(APPLE)
     set(VCPKG_TARGET_TRIPLET x64-osx CACHE STRING "")
     set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "")
 
+    # -------------------------------------------------------
+    # Build TBB ---------------------------------------------
+    message(STATUS "--------------------- TBB automatic mode ---------------------")
+    set(TBB_LIB_NAME 3rdparty/oneTBB)
+
+    add_subdirectory(${TBB_LIB_NAME})
+    link_directories(${CMAKE_BINARY_DIR}/lib)
+
+    include(ExternalProject)
+
+    ExternalProject_Add(PREFIX ${PROJECT_SOURCE_DIR}
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
+    TMP_DIR "3rdparty/oneTBB/"
+    STAMP_DIR "3rdparty/oneTBB/"
+    LOG_DIR "3rdparty/oneTBB/"
+    BINARY_DIR "3rdparty/oneTBB/"
+    INSTALL_DIR "3rdparty/oneTBB/"
+    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DCMAKE_OSX_ARCHITECTURES=x86_64 -DBUILD_SHARED_LIBS=OFF
+    )
+
+    set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") #Setting the module paths to the <package-name>config.cmake files for each lib
+    set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/include/")
+    find_package(TBB COMPONENTS tbb)
+    # -------------------------------------------------------
+    # -------------------------------------------------------
+
 elseif(MSVC OR WIN32)
 	#set(PYLON_HOME "C:/Program Files/Basler/pylon 6/Development")
     #set(PYLON_INCLUDE_DIR "C:/Program Files/Basler/pylon 6/Development/include")
     #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake) # The find pylon file is in the cmake folder
     #set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:/Qt/${QT_VERSION}/msvc2019_64")
-
+    message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(VCPKG_TARGET_TRIPLET x64-windows-static-md CACHE STRING "")
+
+    # -------------------------------------------------------
+    # Build TBB ---------------------------------------------
+    message(STATUS "--------------------- TBB automatic mode ---------------------")
+    set(TBB_LIB_NAME 3rdparty/oneTBB)
+
+    add_subdirectory(${TBB_LIB_NAME})
+    link_directories(${CMAKE_BINARY_DIR}/lib)
+
+    include(ExternalProject)
+
+    ExternalProject_Add(PREFIX ${PROJECT_SOURCE_DIR}
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
+    TMP_DIR "3rdparty/oneTBB/"
+    STAMP_DIR "3rdparty/oneTBB/"
+    LOG_DIR "3rdparty/oneTBB/"
+    BINARY_DIR "3rdparty/oneTBB/"
+    INSTALL_DIR "3rdparty/oneTBB/"
+    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DBUILD_SHARED_LIBS=OFF
+    )
+
+    set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") #Setting the module paths to the <package-name>config.cmake files for each lib
+    set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/include/")
+    find_package(TBB COMPONENTS tbb)
+    # -------------------------------------------------------
+    # -------------------------------------------------------
 endif()
 # ----------------------------------------------------------------------------------------------
 
@@ -203,35 +257,6 @@ message(STATUS "--------------------- SPII manual mode ---------------------")
     endif()
 endif()
 # -------------------------------------------------------
-
-
-# -------------------------------------------------------
-# Build TBB ---------------------------------------------
-message(STATUS "--------------------- TBB automatic mode ---------------------")
-set(TBB_LIB_NAME 3rdparty/oneTBB)
-
-add_subdirectory(${TBB_LIB_NAME})
-link_directories(${CMAKE_BINARY_DIR}/lib)
-#find_package(TBB CONFIG REQUIRED)
-
-include(ExternalProject)
-
-ExternalProject_Add(PREFIX ${PROJECT_SOURCE_DIR}
-SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
-TMP_DIR "3rdparty/oneTBB/"
-STAMP_DIR "3rdparty/oneTBB/"
-LOG_DIR "3rdparty/oneTBB/"
-BINARY_DIR "3rdparty/oneTBB/"
-INSTALL_DIR "3rdparty/oneTBB/"
-CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DCMAKE_OSX_ARCHITECTURES=x86_64
-)
-
-set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") #Setting the module paths to the <package-name>config.cmake files for each lib
-set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/include/")
-find_package(TBB COMPONENTS tbb)
-# -------------------------------------------------------
-# -------------------------------------------------------
-
 
 
 # Output of initial values -----------------------------------------------
