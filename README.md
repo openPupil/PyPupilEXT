@@ -134,7 +134,7 @@ import cv2
 algorithm = pp.PuRe()
 
 # Images are read in grayscale, as the pupil detection algorithms usually operate on grayscale images
-image = cv2.imread('tests/0.bmp', cv2.IMREAD_GRAYSCALE)
+image = cv2.imread('tests/1.bmp', cv2.IMREAD_GRAYSCALE)
 
 # Images can be undistorted by loading a calibration file from the PupilEXT software either creating a SingleCalibration or StereoCalibration calibration object
 calibration = pp.SingleCalibration('single_calibration.xml')
@@ -181,7 +181,7 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 img = cv2.imread("tests/1.bmp", cv2.IMREAD_GRAYSCALE)
 
 pupilClass = pp.Pupil()
-assert pupil.confidence == -1
+assert pupilClass.confidence == -1
 
 pure = pp.PuRe()
 pure.maxPupilDiameterMM = 7
