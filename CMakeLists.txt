@@ -57,15 +57,6 @@ message(STATUS "--------------------------------------------------------" )
 if(APPLE)
     message(STATUS "--------------------- SYSTEM MACOSX ---------------------")
 
-	#set(PYLON_HOME "/Library/Frameworks/pylon.framework")
-    #set(PYLON_INCLUDE_DIR ${PYLON_INCLUDE_DIR} "/Library/Frameworks/pylon.framework/Headers")
-    #set(PYLON_INCLUDE_DIR ${PYLON_INCLUDE_DIR} "/Library/Frameworks/pylon.framework/Headers/GenICam")
-    #set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/Library/Frameworks/pylon.framework")
-    #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake) # The find pylon file is in the cmake folder
-
-    #set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/Users/${USER_NAME_MAC}/Qt/5.15.2/clang_64")
-    #set(Qt5_DIR "/Users/${USER_NAME_MAC}/Qt/${QT_VERSION}/clang_64/lib/cmake/Qt5")
-
     set(VCPKG_TARGET_TRIPLET x64-osx CACHE STRING "")
     set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "")
 
@@ -75,31 +66,36 @@ if(APPLE)
     set(TBB_LIB_NAME 3rdparty/oneTBB)
 
     add_subdirectory(${TBB_LIB_NAME})
-    link_directories(${CMAKE_BINARY_DIR}/lib)
 
     include(ExternalProject)
 
-    ExternalProject_Add(PREFIX ${PROJECT_SOURCE_DIR}
+    ExternalProject_Add(Build_TBB
+    PREFIX ${PROJECT_SOURCE_DIR}
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
     TMP_DIR "3rdparty/oneTBB/"
     STAMP_DIR "3rdparty/oneTBB/"
     LOG_DIR "3rdparty/oneTBB/"
     BINARY_DIR "3rdparty/oneTBB/"
     INSTALL_DIR "3rdparty/oneTBB/"
-    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DCMAKE_OSX_ARCHITECTURES=x86_64 -DBUILD_SHARED_LIBS=OFF
+    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DCMAKE_OSX_ARCHITECTURES=x86_64 -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF -DTBBMALLOC_PROXY_BUILD=OFF
     )
 
     set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") #Setting the module paths to the <package-name>config.cmake files for each lib
-    set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/include/")
-    find_package(TBB COMPONENTS tbb)
+    set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
+
+    # findpackage will not work with externalProject_Add. The libs need to be added manually
+    # Source of the following code suggestion:
+    # https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+    set(TBB_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/")
+    set(prefix "lib")
+    set(suffix ".a")
+
+    link_directories(${TBB_LIB_DIR})
+
     # -------------------------------------------------------
     # -------------------------------------------------------
 
 elseif(MSVC OR WIN32)
-	#set(PYLON_HOME "C:/Program Files/Basler/pylon 6/Development")
-    #set(PYLON_INCLUDE_DIR "C:/Program Files/Basler/pylon 6/Development/include")
-    #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake) # The find pylon file is in the cmake folder
-    #set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:/Qt/${QT_VERSION}/msvc2019_64")
     message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(VCPKG_TARGET_TRIPLET x64-windows-static-md CACHE STRING "")
 
@@ -109,26 +105,41 @@ elseif(MSVC OR WIN32)
     set(TBB_LIB_NAME 3rdparty/oneTBB)
 
     add_subdirectory(${TBB_LIB_NAME})
-    link_directories(${CMAKE_BINARY_DIR}/lib)
 
     include(ExternalProject)
 
-    ExternalProject_Add(PREFIX ${PROJECT_SOURCE_DIR}
+    ExternalProject_Add(Build_TBB
+    PREFIX ${PROJECT_SOURCE_DIR}
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
     TMP_DIR "3rdparty/oneTBB/"
     STAMP_DIR "3rdparty/oneTBB/"
     LOG_DIR "3rdparty/oneTBB/"
     BINARY_DIR "3rdparty/oneTBB/"
     INSTALL_DIR "3rdparty/oneTBB/"
-    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DBUILD_SHARED_LIBS=OFF
+    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=build -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF -DTBBMALLOC_PROXY_BUILD=OFF
     )
 
     set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") #Setting the module paths to the <package-name>config.cmake files for each lib
-    set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/include/")
-    find_package(TBB COMPONENTS tbb)
+    set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
+
+    # findpackage will not work with externalProject_Add. The libs need to be added manually
+    # Source of the following code suggestion:
+    # https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+    set(TBB_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/")
+    set(prefix "")
+    set(suffix ".lib")
+
+    link_directories(${TBB_LIB_DIR})
+
     # -------------------------------------------------------
     # -------------------------------------------------------
 endif()
+
+# Source of the following code suggestion:
+# https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+set(TBB_LIBRARIES # currently only libtbb.a (libtbbmalloc.a ommited as not needed)
+  "${TBB_LIB_DIR}${prefix}tbb${suffix}")
+
 # ----------------------------------------------------------------------------------------------
 
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share")
@@ -141,10 +152,10 @@ set(Eigen3_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPL
 set(Ceres_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/ceres")
 set(glog_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/glog")
 set(pybind11_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/share/glog")
-# TODO: It seems that boost has no config file in vcpkg. The dirs need to be set manually on mac
 # ------------------------------------------------------------------------------------------------
 
 # This line is not needed as it will be defined in the setup.py file
+# However when it is necessary to build pypupilext with cmake Python_NumPy_INCLUDE_DIR is needed
 #set(Python_NumPy_INCLUDE_DIR "/Users/papillonpro/opt/anaconda3/envs/pypupilenv/lib/python3.7/site-packages/numpy/core/include")
 #set(Python_NumPy_INCLUDE_DIR "C:/Users/PupilPC2.0/Anaconda3/envs/pypupilENV/lib/site-packages/numpy/core/include")
 
@@ -155,9 +166,7 @@ find_package(Ceres CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 #find_package(Qt5 COMPONENTS Widgets Concurrent SerialPort Charts Svg PrintSupport REQUIRED) # OpenGL
-#find_package(Pylon REQUIRED) # The "FindPylon.cmake" is in the project folder in cmake/
 
-#find_package(Boost CONFIG REQUIRED)
 
 # Check if everthing was found correctly for each used package
 if(OPENCV_FOUND)
@@ -294,9 +303,13 @@ pybind11_add_module(_pypupil
 target_link_libraries(_pypupil PRIVATE
         ${OpenCV_LIBS}
         ${Boost_LIBRARIES}
-        TBB::tbb
+        ${TBB_LIBRARIES}
         ${spii_LIBRARIES}
         ${CERES_LIBRARIES})
+
+# See here for more information:
+# https://stackoverflow.com/questions/48142082/cmake-externalproject-add-project-not-building-before-targets-that-depend-on-it
+add_dependencies(_pypupil Build_TBB)
 
 # -------------------------------------------------------
 
@@ -306,8 +319,7 @@ message(STATUS "--- Include directories ---" )
 message(STATUS " OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 message(STATUS " Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
 message(STATUS " TBB_INCLUDE_DIR: ${TBB_INCLUDE_DIR}")
-message(STATUS " TBB_LIB_DIR 1: ${TBB_LIBS}")
-message(STATUS " TBB_LIB_DIR 2: ${TBB_LIBRARIES}")
+message(STATUS " TBB_LIB: ${TBB_LIBRARIES}")
 
 message(STATUS " spii_INCLUDE_DIR: ${spii_INCLUDE_DIR}")
 message(STATUS " EIGEN_INCLUDE_DIR: ${EIGEN_INCLUDE_DIR}")

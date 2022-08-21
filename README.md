@@ -42,7 +42,7 @@ The `--recurse-submodules` option is important, as vcpkg is a submodule. Without
 **Step 2:** Create a new python 3.7. environment on your machine.
 
 ```shell
-conda create -n pypupilenv python=3.7
+conda create -n pypupilenv python=3.9
 conda activate pypupilenv
 conda install numpy
 conda install matplotlib
@@ -86,7 +86,7 @@ exit()
 Copy the printed path, which is in my case ``/Users/papillonmac/miniconda3/envs/pypupilENV/lib/python3.7/site-packages/numpy/core/include``. This path needs to be included in the ``PyPupilEXT/CMakeLists.txt`` file. In the ``CMakeLists.txt`` file, you need to find the following line:
 
 ```cmake
-set(Python_NumPy_INCLUDE_DIR "/Users/papillonmac/miniconda3/envs/TestENV/lib/python3.7/site-packages/numpy/core/include")
+set(Python_NumPy_INCLUDE_DIR "/Users/papillonmac/miniconda3/envs/TestENV/lib/python3.9/site-packages/numpy/core/include")
 ```
 
 Update this path with your own path to the C++ NumPy header. Now you are ready to build the C++ files. For this, open your terminal, locate the PyPupilEXT folder and make sure you are in the right conda env as specified previously.
