@@ -29,6 +29,7 @@ jobs:
           brew install nasm
           brew install libomp
           brew info libomp
+          brew install pkg-config
 
       - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
@@ -44,13 +45,7 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
-          vcpkgGitCommitId: "df40d1c476dc02d71b113e4a63c3a32b00ebb5bd"
-
-      # From https://github.com/esdandreu/python-extension-cpp/blob/main/.github/workflows/test.yml
-      #- name: Pre install vcpkg
-      #  run: |
-      #    ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/bootstrap-vcpkg.sh
-      #    ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/vcpkg install --x-manifest-root=${{ github.workspace }}/PyPupilEXT/ --x-install-root=${{ github.workspace }}/PyPupilEXT/build/vcpkg_installed
+          vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512"
 
       - name: Install python build requirements (All-Systems)
         run: |
