@@ -1,9 +1,9 @@
 on:
   push:
-    #branches:
-    #  - main
-    branches-ignore:
-      - "**"
+    branches:
+      - main
+    #branches-ignore:
+    #  - "**"
 
 jobs:
   build_wheels:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-11.6]
+        os: [macos-latest]
         python_version: ["3.7"]
 
     steps:
@@ -44,14 +44,13 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
-          #vcpkgGitCommitId: "11be87ec561d9d70dc527afad886744fe149c2ce" #Newest one
-          vcpkgGitCommitId: "210240b399fbc2f1363f4103b6a93629c207d7e3" #Use this
+          vcpkgGitCommitId: "df40d1c476dc02d71b113e4a63c3a32b00ebb5bd"
 
       # From https://github.com/esdandreu/python-extension-cpp/blob/main/.github/workflows/test.yml
-      - name: Pre install vcpkg
-        run: |
-          ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/bootstrap-vcpkg.sh
-          ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/vcpkg install --x-manifest-root=${{ github.workspace }}/PyPupilEXT/ --x-install-root=${{ github.workspace }}/PyPupilEXT/build/vcpkg_installed
+      #- name: Pre install vcpkg
+      #  run: |
+      #    ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/bootstrap-vcpkg.sh
+      #    ${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg/vcpkg install --x-manifest-root=${{ github.workspace }}/PyPupilEXT/ --x-install-root=${{ github.workspace }}/PyPupilEXT/build/vcpkg_installed
 
       - name: Install python build requirements (All-Systems)
         run: |

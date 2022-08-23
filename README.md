@@ -62,7 +62,7 @@ conda activate pypupilenv
 python setup.py sdist bdist_wheel
 ```
 
-Then, in the folder ``PyPupilEXT/dist``, there should be a new *.whl file, which is on a mac machine, for example ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``. This file can be used to install the python package. For this, locate the dist folder and pip install it.
+Then, in the folder ``PyPupilEXT/dist``, there should be a new *.whl file, which is on a mac machine, for example ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``. This file can be used to install the python package. For this, locate the dist folder and pip install it. If you experience any platform compability error, then you need to rename the file ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``to ``PyPupilEXT-0.0.1-cp37-none-any.whl``
 
 ```shell
 cd dist
