@@ -209,6 +209,7 @@ endif()
 set(Boost_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
+set(OMP_INCLUDE_DIRS "/usr/local/Cellar/libomp/14.0.6/include")
 # -------------------------------------------------------
 
 # Adjustments for spii -------------------------------------------------------
@@ -283,6 +284,7 @@ include_directories(${OpenCV_INCLUDE_DIRS}
         ${EIGEN_INCLUDE_DIR}
         ${CERES_INCLUDE_DIRS}
         ${pybind11_INCLUDE_DIR}
+        ${OMP_INCLUDE_DIRS}
         "src/singleeyefitter"
         "src/pupil-detection-methods")
 

@@ -28,7 +28,7 @@ jobs:
         run: |
           brew install nasm
           brew install libomp
-          brew info libomp
+          brew install libmpc
           brew install pkg-config
 
       - name: Get latest Cmake and ninja (All-Systems)
