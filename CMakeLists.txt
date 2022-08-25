@@ -92,6 +92,8 @@ if(APPLE)
 
     link_directories(${TBB_LIB_DIR})
 
+    set(OMP_INCLUDE_DIRS "/usr/local/Cellar/libomp/14.0.6/include")
+
     # -------------------------------------------------------
     # -------------------------------------------------------
 
@@ -165,6 +167,7 @@ find_package(Eigen3 CONFIG REQUIRED)
 find_package(Ceres CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
+find_package(OpenMP)
 #find_package(Qt5 COMPONENTS Widgets Concurrent SerialPort Charts Svg PrintSupport REQUIRED) # OpenGL
 
 
@@ -209,7 +212,6 @@ endif()
 set(Boost_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
-set(OMP_INCLUDE_DIRS "/usr/local/Cellar/libomp/14.0.6/include")
 # -------------------------------------------------------
 
 # Adjustments for spii -------------------------------------------------------
