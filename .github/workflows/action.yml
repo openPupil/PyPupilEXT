@@ -37,7 +37,7 @@ jobs:
           brew install pkg-config
           which brew
           brew info libomp
-          ls -l /usr/local/Cellar/libomp/14.0.6/include
+          ln -s /usr/local/Cellar/libomp/14.0.6/include/omp.h omp.h
 
       #- name: Get latest Cmake and ninja (All-Systems)
       #  uses: lukka/get-cmake@latest
