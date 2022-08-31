@@ -27,7 +27,7 @@ jobs:
       - name: Install system packages (macOS)
         run: |
           brew install gcc
-          brew reinstall gcc --without-multilib
+          brew reinstall gcc
           brew install ninja
           brew install nasm
           brew install gmp
