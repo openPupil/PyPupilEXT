@@ -37,7 +37,7 @@ set(CTEST_OUTPUT_ON_FAILURE TRUE)
 # Multithreading using OpenMP
 option(OPENMP
        "Enable multi-threading (requires OpenMP)"
-       OFF)
+       ON)
 
 # For Clang-based tools.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
