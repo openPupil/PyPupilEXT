@@ -71,8 +71,6 @@ class CMakeBuild(build_ext):
 
         if platform.system() == "Windows":
             cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(), extdir)]
-            if sys.maxsize > 2**32:
-                cmake_args += ['-A', 'x64']
             build_args += ['--', '/m']
             cmake_args += ['-DVCPKG_TARGET_TRIPLET=x64-windows-static-md']
         else:
