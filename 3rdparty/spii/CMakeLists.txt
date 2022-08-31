@@ -23,6 +23,10 @@ list(APPEND SEARCH_HEADERS /usr/include)
 list(APPEND SEARCH_HEADERS /usr/local/include)
 list(APPEND SEARCH_HEADERS /usr/local/homebrew/include) # Mac OS X
 list(APPEND SEARCH_HEADERS /opt/local/include)
+list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp/14.0.6/include/)
+list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp/)
+list(APPEND SEARCH_HEADERS /usr/local/Cellar/)
+
 
 enable_testing()
 set(CTEST_OUTPUT_ON_FAILURE TRUE)
