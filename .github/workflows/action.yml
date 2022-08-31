@@ -36,6 +36,8 @@ jobs:
           brew install wget
           brew install pkg-config
           which brew
+          brew info libomp
+          ls -l /usr/local/Cellar/
           ls -l /usr/local/Cellar/libomp/
 
       #- name: Get latest Cmake and ninja (All-Systems)
