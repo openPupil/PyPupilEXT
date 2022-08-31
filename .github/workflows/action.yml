@@ -26,7 +26,6 @@ jobs:
 
       - name: Install system packages (macOS)
         run: |
-          xcode-select --install
           brew install gcc
           brew reinstall gcc --without-multilib
           brew install ninja
@@ -40,6 +39,8 @@ jobs:
           which brew
           brew info libomp
           ln -s /usr/local/Cellar/libomp/14.0.6/include/omp.h omp.h
+          export PATH=/usr/local/bin:$PATH
+          export CC=/usr/local/bin/gcc
 
       #- name: Get latest Cmake and ninja (All-Systems)
       #  uses: lukka/get-cmake@latest
