@@ -92,8 +92,8 @@ if(APPLE)
 
     link_directories(${TBB_LIB_DIR})
 
-    set(OMP_INCLUDE_DIRS "/usr/local/Cellar/libomp/14.0.6/include")
-    set(HOMEBRE_INCLUDE "/opt/homebrew/include")
+    #set(OMP_INCLUDE_DIRS "/usr/local/Cellar/libomp/14.0.6/include")
+    #set(HOMEBRE_INCLUDE "/opt/homebrew/include/libomp")
 
     # -------------------------------------------------------
     # -------------------------------------------------------
@@ -287,8 +287,8 @@ include_directories(${OpenCV_INCLUDE_DIRS}
         ${EIGEN_INCLUDE_DIR}
         ${CERES_INCLUDE_DIRS}
         ${pybind11_INCLUDE_DIR}
-        ${OMP_INCLUDE_DIRS}
-        ${HOMEBRE_INCLUDE}
+        #${OMP_INCLUDE_DIRS}
+        #${HOMEBRE_INCLUDE}
         "src/singleeyefitter"
         "src/pupil-detection-methods")
 

@@ -31,11 +31,10 @@ jobs:
           brew install nasm
           brew install gmp
           brew install cmake
-          brew install --build-from-source libomp
           brew install libmpc
-          brew install mpfr
           brew install wget
           brew install pkg-config
+          which brew
 
       #- name: Get latest Cmake and ninja (All-Systems)
       #  uses: lukka/get-cmake@latest
