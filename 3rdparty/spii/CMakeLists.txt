@@ -29,7 +29,8 @@ list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar)
 
 set(OMP_INCLUDE_DIR "/usr/local/Cellar/libomp/14.0.6/include")
-
+set(OMP_LIB_DIR "/usr/local/Cellar/libomp/14.0.6/lib")
+link_directories(${OMP_LIB_DIR})
 
 enable_testing()
 set(CTEST_OUTPUT_ON_FAILURE TRUE)

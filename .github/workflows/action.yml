@@ -1,9 +1,9 @@
 on:
   push:
-    #branches:
-    #  - main
-    branches-ignore:
-      - "**"
+    branches:
+      - main
+    #branches-ignore:
+    #  - "**"
 
 jobs:
   build_wheels:
