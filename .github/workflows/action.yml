@@ -27,13 +27,15 @@ jobs:
         with:
           macos: |
             echo "Starting on macOS"
+            brew install pkg-config
+            brew install cmake
+            brew install nasm
             brew install gcc
             brew install llvm
-            brew install nasm
-            brew install cmake
             brew install libomp
             brew install libmpc
-            brew install pkg-config
+            ls -l /usr/local/Cellar/libomp/14.0.6/
+            ls -l /usr/local/Cellar/libomp/14.0.6/lib
           linux: |
             echo "Starting on Linux"
             echo "Starting on Linux"

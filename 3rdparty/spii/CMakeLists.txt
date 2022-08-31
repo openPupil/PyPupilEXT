@@ -18,6 +18,7 @@ list(APPEND SEARCH_LIBS /usr/lib)
 list(APPEND SEARCH_LIBS /usr/local/lib)
 list(APPEND SEARCH_LIBS /usr/local/homebrew/lib) # Mac OS X
 list(APPEND SEARCH_LIBS /opt/local/lib)
+#list(OMP_INCLUDE_DIR "/usr/local/Cellar/libomp/14.0.6/")
 
 list(APPEND SEARCH_HEADERS /usr/include)
 list(APPEND SEARCH_HEADERS /usr/local/include)
