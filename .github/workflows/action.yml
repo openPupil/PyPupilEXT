@@ -70,6 +70,12 @@ jobs:
           cd PyPupilEXT
           python setup.py bdist_wheel
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
-          path: ./wheelhouse/*.whl
+          name: artifact
+          path: dist
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
