@@ -16,21 +16,16 @@ jobs:
         python_version: ["3.7"]
 
     steps:
-      #- uses: actions/checkout@v3
-      #  with:
-      #    submodules: true
+      - name: Get latest Cmake and ninja (All-Systems)
+        uses: lukka/get-cmake@latest
 
       - name: Clone GitHub repository
         run: |
           git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 
-      - name: Install system packages
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            echo "Starting on Linux"
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            echo "Starting on Windows"
-          elif [ "$RUNNER_OS" == "macOS" ]; then
+      - uses: knicknic/os-specific-run@v1.0.3
+        with:
+          macos: |
             echo "Starting on macOS"
             brew install gcc
             brew install llvm
@@ -39,18 +34,12 @@ jobs:
             brew install libomp
             brew install libmpc
             brew install pkg-config
-            which brew
-            brew info libomp
-            ln -s /usr/local/Cellar/libomp/14.0.6/include/omp.h omp.h
-            export PATH=/usr/local/bin:$PATH
-            export CC=/usr/local/bin/gcc
-          else
-            echo "$RUNNER_OS not supported"
-            exit 1
-        shell: bash
-
-      #- name: Get latest Cmake and ninja (All-Systems)
-      #  uses: lukka/get-cmake@latest
+          linux: |
+            echo "Starting on Linux"
+            echo "Starting on Linux"
+          windows: |
+            echo "Starting on Windows"
+            echo "Starting on Windows"
 
       - uses: actions/setup-python@v3
         with:
