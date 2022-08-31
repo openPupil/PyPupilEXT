@@ -90,7 +90,8 @@ set (SPII_LIBRARY_DEPENDENCIES)
 # OpenMP needs to be included as a library on some platforms.
 if (OPENMP_FOUND)
   if (NOT MSVC)
-    list(APPEND SPII_LIBRARY_DEPENDENCIES gomp)
+    #list(APPEND SPII_LIBRARY_DEPENDENCIES gomp)
+    list(APPEND SPII_LIBRARY_DEPENDENCIES libomp)
   endif (NOT MSVC)
 endif ()
 
