@@ -35,6 +35,11 @@ jobs:
           brew install wget
           brew install pkg-config
           which brew
+          ls -l /usr/ /opt/homebrew/include/
+          ls -l /usr/ /opt/homebrew/include/libomp
+          ls -l /usr/local/Cellar/
+          ls -l /opt/homebrew/Cellar/libomp/
+          ls -l /opt/homebrew/Cellar/libomp/14.0.5/include/
 
       #- name: Get latest Cmake and ninja (All-Systems)
       #  uses: lukka/get-cmake@latest
