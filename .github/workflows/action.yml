@@ -27,7 +27,7 @@ jobs:
       - name: Install system packages (macOS)
         run: |
           brew install gcc
-          brew install clang-omp
+          brew install llvm
           brew install ninja
           brew install nasm
           brew install gmp
