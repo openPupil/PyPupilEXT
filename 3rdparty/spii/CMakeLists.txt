@@ -26,6 +26,7 @@ list(APPEND SEARCH_HEADERS /opt/local/include)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp/14.0.6/include/)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp/)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar/)
+set(OMP_INCLUDE_DIR "/usr/local/Cellar/libomp/14.0.6/include")
 
 
 enable_testing()
@@ -34,7 +35,7 @@ set(CTEST_OUTPUT_ON_FAILURE TRUE)
 # Multithreading using OpenMP
 option(OPENMP
        "Enable multi-threading (requires OpenMP)"
-       ON)
+       OFF)
 
 # For Clang-based tools.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -67,6 +68,7 @@ endif ()
 #MESSAGE("-- Using Eigen at " ${EIGEN_INCLUDE})
 
 include_directories(
+  ${OMP_INCLUDE_DIR}
   include
   SYSTEM thirdparty/Catch
   SYSTEM thirdparty/Eigen
