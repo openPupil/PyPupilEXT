@@ -67,20 +67,20 @@ jobs:
           cd PyPupilEXT
           python setup.py sdist bdist_wheel
 
-      - uses: knicknic/os-specific-run@v1.0.3
-        with:
-          macos: |
-            echo "Starting on macOS"
-            ls -l
-            tree
+      #- uses: knicknic/os-specific-run@v1.0.3
+      #  with:
+      #    macos: |
+      #      echo "Starting on macOS"
+      #      ls -l
+      #      tree
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: artifact
-          path: PyPupilEXT/dist/
-          if-no-files-found: warn
+      #- uses: actions/download-artifact@v3
+      #  with:
+      #    name: artifact
+      #    path: PyPupilEXT/dist/
+      #    if-no-files-found: warn
 
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
-          path: wheelhouse/*.whl
+          path: PyPupilEXT/dist/
