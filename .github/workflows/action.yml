@@ -69,7 +69,8 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: artifact
-          path: dist
+          path: PyPupilEXT/dist/
+          if-no-files-found: warn
 
       - name: Upload wheels
         uses: actions/upload-artifact@v3
