@@ -34,6 +34,7 @@ jobs:
             brew install llvm
             brew install libomp
             brew install libmpc
+            brew install tree
           linux: |
             echo "Starting on Linux"
           windows: |
@@ -65,6 +66,13 @@ jobs:
         run: |
           cd PyPupilEXT
           python setup.py sdist bdist_wheel
+
+      - uses: knicknic/os-specific-run@v1.0.3
+        with:
+          macos: |
+            echo "Starting on macOS"
+            ls -l
+            tree
 
       - uses: actions/download-artifact@v3
         with:
