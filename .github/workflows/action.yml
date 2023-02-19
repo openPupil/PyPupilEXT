@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [Windows, macOS]
+        #os: [Windows, macOS]
+        os: [macOS]
         python_version: ["3.8"]
 
     steps:
@@ -62,12 +63,24 @@ jobs:
           python -m pip install ninja
           python -m pip install cmake
 
-      - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }} (All-Systems)
+      #- name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }} (All-Systems)
+      #  run: |
+      #    cd PyPupilEXT
+      #    python setup.py sdist bdist_wheel
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.12.0
+
+      - name: Build wheels
         run: |
           cd PyPupilEXT
-          python setup.py sdist bdist_wheel
+          python -m cibuildwheel --output-dir wheelhouse
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3
         with:
-          path: PyPupilEXT/dist/
+          path: ./wheelhouse/*.whl
+
+      #- name: Upload wheels
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    path: PyPupilEXT/dist/
