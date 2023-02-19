@@ -8,11 +8,11 @@ on:
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        os: [Windows, macOS]
         python_version: ["3.8"]
 
     steps:
@@ -66,19 +66,6 @@ jobs:
         run: |
           cd PyPupilEXT
           python setup.py sdist bdist_wheel
-
-      #- uses: knicknic/os-specific-run@v1.0.3
-      #  with:
-      #    macos: |
-      #      echo "Starting on macOS"
-      #      ls -l
-      #      tree
-
-      #- uses: actions/download-artifact@v3
-      #  with:
-      #    name: artifact
-      #    path: PyPupilEXT/dist/
-      #    if-no-files-found: warn
 
       - name: Upload wheels
         uses: actions/upload-artifact@v3
