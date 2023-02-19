@@ -4,7 +4,6 @@ on:
       - main
     #branches-ignore:
     #  - "**"
-    #
 
 jobs:
   build_wheels:
@@ -14,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        python_version: ["3.7"]
+        python_version: ["3.8"]
 
     steps:
       - name: Get latest Cmake and ninja (All-Systems)
@@ -35,13 +34,9 @@ jobs:
             brew install llvm
             brew install libomp
             brew install libmpc
-            ls -l /usr/local/Cellar/libomp/14.0.6/
-            ls -l /usr/local/Cellar/libomp/14.0.6/lib
           linux: |
             echo "Starting on Linux"
-            echo "Starting on Linux"
           windows: |
-            echo "Starting on Windows"
             echo "Starting on Windows"
 
       - uses: actions/setup-python@v3
