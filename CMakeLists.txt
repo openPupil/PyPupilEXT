@@ -68,15 +68,14 @@ if(APPLE)
     if(NOT DEFINED ENV{CMAKE_OSX_ARCHITECTURES})
          message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES environment variable is not set.")
     endif()
-
-elseif(UNIX AND NOT APPLE)  # UNIX corresponds to Linux systems
-    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
-    find_package(OpenMP REQUIRED)  # Ensure OpenMP is found on Linux systems
-    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")  # Set the OpenMP flags
-    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
 elseif(MSVC OR WIN32)
     message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(VCPKG_TARGET_TRIPLET $ENV{VCPKG_TARGET_TRIPLET} CACHE STRING "")
+elseif(UNIX AND NOT APPLE)  # UNIX corresponds to Linux systems
+    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
+    find_package(OpenMP REQUIRED)
+    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
+    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
 # ========================================================================
@@ -100,6 +99,15 @@ add_subdirectory(${TBB_LIB_NAME})
 
 include(ExternalProject)
 
+if(APPLE)
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a")  # macOS
+elseif(UNIX AND NOT APPLE)
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.so")  # Linux
+elseif(MSVC OR WIN32)
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
+endif()
+
+
 ExternalProject_Add(Build_TBB
     PREFIX ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
@@ -109,10 +117,10 @@ ExternalProject_Add(Build_TBB
     BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
     INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/install
     CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-    BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a"
+    BUILD_BYPRODUCTS ${TBB_BUILD_BYPRODUCTS}
 )
 
-set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/")  # Setting the module paths to the <package-name>config.cmake files for each lib
+set(TBB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/cmake/TBB/")  # Setting the module paths to the <package-name>config.cmake files for each lib
 set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
 
 # find_package will not work with externalProject_Add. The libs need to be added manually
@@ -128,8 +136,9 @@ elseif(MSVC OR WIN32)
     set(suffix ".lib")
 elseif(UNIX AND NOT APPLE)
     set(prefix "lib")
-    set(suffix ".so")  # Shared library suffix for Linux
+    set(suffix ".a")  # Statische Bibliothek für Linux
 endif()
+
 
 link_directories(${TBB_LIB_DIR})
 
@@ -307,13 +316,13 @@ pybind11_add_module(_pypupil
         )
 
 target_link_libraries(_pypupil PRIVATE
-        ${OpenCV_LIBS}
-        ${Boost_LIBRARIES}
-        ${TBB_LIBRARIES}
-        ${spii_LIBRARIES}
-        ${CERES_LIBRARIES}
-        # Link OpenMP on Linux systems
-        $<$<PLATFORM_ID:Linux>:OpenMP::OpenMP_CXX>)
+    ${OpenCV_LIBS}
+    ${Boost_LIBRARIES}
+    ${TBB_LIBRARIES}
+    ${spii_LIBRARIES}
+    ${CERES_LIBRARIES}
+    $<$<PLATFORM_ID:Linux>:OpenMP::OpenMP_CXX>)
+
 
 # See here for more information:
 # https://stackoverflow.com/questions/48142082/cmake-externalproject-add-project-not-building-before-targets-that-depend-on-it
