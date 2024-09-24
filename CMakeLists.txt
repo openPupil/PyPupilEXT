@@ -102,9 +102,11 @@ include(ExternalProject)
 if(APPLE)
     set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a")  # macOS
 elseif(UNIX AND NOT APPLE)
-    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.so")  # Linux
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a")  # Linux
+    set(ARCHITECTURE_OPTION "-DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}")
 elseif(MSVC OR WIN32)
     set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
+    set(ARCHITECTURE_OPTION "-DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
 if(APPLE)
@@ -114,7 +116,7 @@ if(APPLE)
 else()
     set(TBB_CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
                        -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF
-                       -DTBBMALLOC_PROXY_BUILD=OFF)
+                       -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
 ExternalProject_Add(Build_TBB

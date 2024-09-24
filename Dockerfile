@@ -45,6 +45,7 @@ RUN apt-get update && \
     libxdamage-dev \
     nasm \
     libomp-dev \
+    libomp5 \
     libeigen3-dev && \
     apt-get clean
 

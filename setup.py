@@ -39,9 +39,9 @@ def get_system_architecture():
         else:
             return "x64-osx", "x86_64"
     elif system == "Linux":
-        return "x64-linux", ""
+        return "x64-linux", "x86_64"
     elif system == "Windows":
-        return "x64-windows-static-md", ""
+        return "x64-windows-static-md", "x86_64"
     else:
         raise RuntimeError(f"Unsupported platform: {system}")
 
@@ -94,7 +94,11 @@ class CMakeBuild(build_ext):
 
         env = os.environ.copy()
         env['VCPKG_TARGET_TRIPLET'] = vcpkg_triplet
-        env['CMAKE_OSX_ARCHITECTURES'] = osx_arch
+
+        if osx_arch:
+            env['CMAKE_OSX_ARCHITECTURES'] = osx_arch
+        else:
+            env['CMAKE_SYSTEM_PROCESSOR']= osx_arch
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
