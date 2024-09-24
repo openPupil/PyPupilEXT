@@ -39,17 +39,11 @@ git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 
 The `--recurse-submodules` option is important, as vcpkg is a submodule. Without this option, the 3rdparty folder will not contain vcpkg packet manager.
 
-**Step 2:** Create a new python 3.7. environment on your machine.
+**Step 2:** Create a new python 3.9. environment on your machine using conda.
 
 ```shell
-conda create -n pypupilenv python=3.9
-conda activate pypupilenv
-conda install numpy
-conda install matplotlib
-conda install pandas
-
-python -m pip install --upgrade pip
-python -m pip install opencv-python
+cd PyPupilEXT
+conda env create -f environment.yml
 ```
 
 **Step 3:** Create a wheel file from the source code to pip install the library.
@@ -57,7 +51,6 @@ python -m pip install opencv-python
 In PyPupilEXT, the pupil detection algorithms are included as C++ files. Therefore, it is necessary to load different C++ libraries to build the pupil detection algorithms. This process is fully automated with vcpkg. You only need to open the PyPupilEXT folder and call a one-liner. Note that the build process will take a while because the C++ libs need to be downloaded and compiled.
 
 ```shell
-cd PyPupilEXT
 conda activate pypupilenv
 python setup.py sdist bdist_wheel
 ```
@@ -71,7 +64,36 @@ pip install PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl
 
 Now you can use the PyPupilEXT package in Python and proceed with the examples provided section two.
 
-#### C) The advanced way of installing PyPupilEXT if nothing works
+#### E) Testing PyPupilEXT using Podman
+
+1. **Build the Image**:
+   ```bash
+   podman build -t pypupil-ext .
+   ```
+
+2. **Run the Container**:
+   ```bash
+   podman run -it pypupil-ext
+   ```
+
+3. **Activate the Conda Environment**:
+   Once inside the container, activate the conda environment:
+   ```bash
+   conda activate pypupilenv
+   ```
+
+4. **Run the Package or Tests**:
+   You can now use the `PyPupilEXT` package within the activated conda environment:
+   ```bash
+   python -m pypupilext
+   ```
+
+   For testing purposes you can interactivley run an enviorment using:
+   ````shell
+   podman run -it ubuntu:22.04 /bin/bash
+   ```
+
+#### D) The advanced way of installing PyPupilEXT if nothing works
 
 If the build process fails, it may be due to the setup.py file. In such a case, it could be useful to compile the C++ files manually. Firstly, you need to find the path to the C++ NumPy header, which is necessary during the compilation. For this, type the following in your shell
 
@@ -156,7 +178,7 @@ print(pupil.outline_confidence)
 
 **Example 2:**  Run a pupil detection algorithm on an eye image and fit an ellipse around the pupil contour.
 
-For this example, you can use the provided test image in this repository in ``tests/1.bmp``. Note that if you use your own images, you need to adjust the parameters of the pupil detection algorithm to match your image resolution. For this, adjust the ``pure.maxPupilDiameterMM`` and ``pure.pure.minPupilDiameterMM`` appropriately. The ``pupil.outline_confidence`` value can be used as an estimate of how well the pupil fit worked. A value of 1 indicates a perfect ellipse fit around the pupil's contour. It is also possible to adjust the parameters of pupil detection algorithm in the GUI of PupilEXT (Link: [https://github.com/openPupil/Open-PupilEXT](https://github.com/openPupil/Open-PupilEXT)) and then transfer the values into your python script. 
+For this example, you can use the provided test image in this repository in ``tests/1.bmp``. Note that if you use your own images, you need to adjust the parameters of the pupil detection algorithm to match your image resolution. For this, adjust the ``pure.maxPupilDiameterMM`` and ``pure.pure.minPupilDiameterMM`` appropriately. The ``pupil.outline_confidence`` value can be used as an estimate of how well the pupil fit worked. A value of 1 indicates a perfect ellipse fit around the pupil's contour. It is also possible to adjust the parameters of pupil detection algorithm in the GUI of PupilEXT (Link: [https://github.com/openPupil/Open-PupilEXT](https://github.com/openPupil/Open-PupilEXT)) and then transfer the values into your python script.
 
 ```python
 import pypupilext as pp

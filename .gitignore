@@ -4,7 +4,6 @@ _generate/
 *.so
 *.py[cod]
 *.egg-info
-*env*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
