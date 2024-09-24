@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(PupilEXT)
 
-#set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)  # Ensure C++17 standard is used
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
@@ -67,12 +67,16 @@ if(APPLE)
 
     if(NOT DEFINED ENV{CMAKE_OSX_ARCHITECTURES})
          message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES environment variable is not set.")
-     endif()
+    endif()
 
-elseif(MSVC OR WIN32 OR UNIX)
+elseif(UNIX AND NOT APPLE)  # UNIX corresponds to Linux systems
+    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
+    find_package(OpenMP REQUIRED)  # Ensure OpenMP is found on Linux systems
+    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")  # Set the OpenMP flags
+    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
+elseif(MSVC OR WIN32)
     message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(VCPKG_TARGET_TRIPLET $ENV{VCPKG_TARGET_TRIPLET} CACHE STRING "")
-
 endif()
 
 # ========================================================================
@@ -108,7 +112,7 @@ ExternalProject_Add(Build_TBB
     BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a"
 )
 
-set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") # Setting the module paths to the <package-name>config.cmake files for each lib
+set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/")  # Setting the module paths to the <package-name>config.cmake files for each lib
 set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
 
 # find_package will not work with externalProject_Add. The libs need to be added manually
@@ -117,18 +121,12 @@ set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
 
 set(TBB_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/")
 if(APPLE)
-    message(STATUS "--------------------- SYSTEM MACOSX ---------------------")
     set(prefix "lib")
     set(suffix ".a")
 elseif(MSVC OR WIN32)
-    message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(prefix "")
     set(suffix ".lib")
 elseif(UNIX AND NOT APPLE)
-    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
-    find_package(OpenMP REQUIRED)  # Ensure OpenMP is found on Linux systems
-    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")  # Set the OpenMP flags
-    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
     set(prefix "lib")
     set(suffix ".so")  # Shared library suffix for Linux
 endif()
@@ -218,7 +216,7 @@ set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGE
 set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 
 # ========================================================================
-# Adjustments for spii -==================================================
+# Adjustments for spii - =================================================
 # ========================================================================
 set(spii_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/spii/include/")
 set(spii_LIB_DIR lib)
@@ -288,6 +286,12 @@ include_directories(${OpenCV_INCLUDE_DIRS}
         "src/singleeyefitter"
         "src/pupil-detection-methods")
 
+# Add OpenMP flags for Linux
+if(UNIX AND NOT APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+
 pybind11_add_module(_pypupil
         src/main.cpp
         src/type_converter.cpp
@@ -307,7 +311,9 @@ target_link_libraries(_pypupil PRIVATE
         ${Boost_LIBRARIES}
         ${TBB_LIBRARIES}
         ${spii_LIBRARIES}
-        ${CERES_LIBRARIES})
+        ${CERES_LIBRARIES}
+        # Link OpenMP on Linux systems
+        $<$<PLATFORM_ID:Linux>:OpenMP::OpenMP_CXX>)
 
 # See here for more information:
 # https://stackoverflow.com/questions/48142082/cmake-externalproject-add-project-not-building-before-targets-that-depend-on-it
