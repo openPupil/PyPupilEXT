@@ -107,6 +107,15 @@ elseif(MSVC OR WIN32)
     set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
 endif()
 
+if(APPLE)
+    set(TBB_CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
+                       -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF
+                       -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
+else()
+    set(TBB_CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
+                       -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF
+                       -DTBBMALLOC_PROXY_BUILD=OFF)
+endif()
 
 ExternalProject_Add(Build_TBB
     PREFIX ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
@@ -116,7 +125,7 @@ ExternalProject_Add(Build_TBB
     LOG_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/log
     BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
     INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/install
-    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    CMAKE_ARGS ${TBB_CMAKE_ARGS}
     BUILD_BYPRODUCTS ${TBB_BUILD_BYPRODUCTS}
 )
 
@@ -146,6 +155,10 @@ link_directories(${TBB_LIB_DIR})
 # https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
 set(TBB_LIBRARIES # currently only libtbb.a (libtbbmalloc.a omitted as not needed)
   "${TBB_LIB_DIR}${prefix}tbb${suffix}")
+
+message(STATUS "TBB_LIB_DIR: ${TBB_LIB_DIR}")
+message(STATUS "TBB_LIBRARIES: ${TBB_LIBRARIES}")
+
 
 # ========================================================================
 # Other adjustments  =====================================================
@@ -296,10 +309,10 @@ include_directories(${OpenCV_INCLUDE_DIRS}
         "src/pupil-detection-methods")
 
 # Add OpenMP flags for Linux
-if(UNIX AND NOT APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
+if(UNIX AND NOT APPLE)  # Linux Systeme
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")  # OpenMP Flags setzen
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")  # Linker Flags setzen
+endif
 
 pybind11_add_module(_pypupil
         src/main.cpp
@@ -316,12 +329,14 @@ pybind11_add_module(_pypupil
         )
 
 target_link_libraries(_pypupil PRIVATE
-    ${OpenCV_LIBS}
-    ${Boost_LIBRARIES}
-    ${TBB_LIBRARIES}
-    ${spii_LIBRARIES}
-    ${CERES_LIBRARIES}
-    $<$<PLATFORM_ID:Linux>:OpenMP::OpenMP_CXX>)
+        ${OpenCV_LIBS}
+        ${Boost_LIBRARIES}
+        ${TBB_LIBRARIES}
+        ${spii_LIBRARIES}
+        ${CERES_LIBRARIES}
+        ${OMP_LIBRARIES}  # Speicher sicherstellen, dass OMP_LIBRARIES gesetzt ist
+        $<$<PLATFORM_ID:Linux>:OpenMP::OpenMP_CXX>)  # Link OpenMP auf Linux-Systemen
+
 
 
 # See here for more information:
@@ -335,11 +350,10 @@ add_dependencies(_pypupil Build_TBB)
 message(STATUS "")
 message(STATUS "--- Include directories ---" )
 message(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
-message(STATUS "Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
 message(STATUS "TBB_INCLUDE_DIR: ${TBB_INCLUDE_DIR}")
-message(STATUS "TBB_LIB: ${TBB_LIBRARIES}")
-message(STATUS "spii_INCLUDE_DIR: ${spii_INCLUDE_DIR}")
-message(STATUS "EIGEN_INCLUDE_DIR: ${EIGEN_INCLUDE_DIR}")
+message(STATUS "Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
+message(STATUS "Spii_INCLUDE_DIR: ${spii_INCLUDE_DIR}")
+message(STATUS "Eigen_INCLUDE_DIR: ${EIGEN_INCLUDE_DIR}")
 message(STATUS "CERES_INCLUDE_DIRS: ${CERES_INCLUDE_DIRS}")
 message(STATUS "pybind11_INCLUDE_DIR: ${pybind11_INCLUDE_DIR}")
 message(STATUS "---------------------------")
