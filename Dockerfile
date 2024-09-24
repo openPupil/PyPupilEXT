@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 # Set environment variables to avoid interaction
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install essential packages and Miniconda
+# Install essential packages
 RUN apt-get update && \
     apt-get install -y \
     wget \
@@ -12,14 +12,45 @@ RUN apt-get update && \
     build-essential \
     cmake \
     g++ \
+    gcc \
+    make \
+    curl \
+    zip \
+    unzip \
+    tar \
     pkg-config \
     libopencv-dev \
+    ninja-build \
+    autoconf \
+    automake \
+    libtool \
+    bison \
+    gperf \
+    libx11 \
+    libxft-dev \
+    libxext-dev \
+    libegl1-mesa-dev \
+    libgles2-mesa-dev \
+    libxrandr-dev \
+    libglib2.0-dev \
+    libxrandr-dev \
+    libxcursor-dev \
+    libxinerama-dev \
+    libxi-dev \
+    libxcomposite-dev \
+    libatk1.0-dev \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libgdk-pixbuf2.0-dev \
+    libxdamage-dev \
+    nasm \
+    libomp-dev \
     libeigen3-dev && \
     apt-get clean
 
-# Install Miniconda
-# You may change this accoridng to your current architecture
+# Install Miniconda with a reliable installation method
 RUN wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh && \
+    chmod +x /tmp/miniconda.sh && \
     /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda && \
     rm /tmp/miniconda.sh
 
@@ -32,12 +63,16 @@ RUN git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT.git /
 # Change to the project directory
 WORKDIR /PyPupilEXT
 
+RUN conda init
+
+RUN bash
+
 # Create the conda environment using environment.yml
 RUN conda env create -f environment.yml
 
 # Activate the conda environment, build the package, and install the wheel file
-RUN /opt/miniconda/bin/conda run -n pypupilenv python setup.py bdist_wheel && \
-    /opt/miniconda/bin/conda run -n pypupilenv pip install dist/*.whl
+RUN conda run -n pypupilenv python setup.py bdist_wheel && \
+    conda run -n pypupilenv pip install dist/*.whl
 
 # Default command to keep the container running with access to the conda environment
 CMD ["/bin/bash"]

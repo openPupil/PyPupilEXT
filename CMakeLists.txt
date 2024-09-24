@@ -117,11 +117,20 @@ set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
 
 set(TBB_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/")
 if(APPLE)
+    message(STATUS "--------------------- SYSTEM MACOSX ---------------------")
     set(prefix "lib")
     set(suffix ".a")
 elseif(MSVC OR WIN32)
+    message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(prefix "")
     set(suffix ".lib")
+elseif(UNIX AND NOT APPLE)
+    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
+    find_package(OpenMP REQUIRED)  # Ensure OpenMP is found on Linux systems
+    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")  # Set the OpenMP flags
+    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
+    set(prefix "lib")
+    set(suffix ".so")  # Shared library suffix for Linux
 endif()
 
 link_directories(${TBB_LIB_DIR})

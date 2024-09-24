@@ -88,9 +88,48 @@ Now you can use the PyPupilEXT package in Python and proceed with the examples p
    python -m pypupilext
    ```
 
-   For testing purposes you can interactivley run an enviorment using:
+   #### D) Buidl the whl-file using podman
+   For testing purposes you can interactivley run a podman enviorment using:
+
    ````shell
-   podman run -it ubuntu:22.04 /bin/bash
+   podman run -it --memory=8g --shm-size=8g --arch amd64 ubuntu:22.04 /bin/bash
+
+   apt-get update
+   apt-get install -y wget git build-essential cmake g++ gcc make curl zip unzip tar pkg-config libopencv-dev ninja-build libeigen3-dev autoconf automake libtool bison gperf libx11 libxft-dev libxext-dev libegl1-mesa-dev libgles2-mesa-dev libxrandr-dev
+   apt-get install -y libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxcomposite-dev libatk1.0-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev
+   apt-get clean
+
+   wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+   chmod +x /tmp/miniconda.sh
+   /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda
+   rm /tmp/miniconda.sh
+
+   PATH="/opt/miniconda/bin:$PATH"
+   git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT.git /PyPupilEXT
+   conda init
+   bash
+
+   # Now save the podman image
+   podman ps # Note the current image-id
+   podman commit <container_id> ubuntu-base-image-x86_64
+
+   # Now you can see the new image
+   podman images
+
+   # Exit your current machine and start it again using image
+   podman run -it --memory=8g --shm-size=8 --arch amd64 ubuntu-base-image-x86_64 /bin/bash
+   ```
+
+   cd PypupilEXT && cd build
+
+   # Other triplets: arm64-linux, arm-linux, x64-linux
+   # For more see here: https://github.com/microsoft/vcpkg/tree/e99d9a4facea9d7e15a91212364d7a12762b7512/triplets
+   cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+
+   Other important commands while building the *.whl file on ubuntu
+   ```shell
+   rm -rf PyPupilEXT.egg-info .eggs build && mkdir build && cd build # Rmove these folders
    ```
 
 #### D) The advanced way of installing PyPupilEXT if nothing works
