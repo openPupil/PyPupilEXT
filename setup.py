@@ -15,22 +15,40 @@
 # https://github.com/safijari/apriltags2_ethz/blob/master/setup.py
 # License: https://github.com/safijari/apriltags2_ethz/blob/master/LICENSE
 
-import os
-import re
 import sys
-import subprocess
+import os
 import platform
+import subprocess
 
-from distutils.version import LooseVersion
-from setuptools import setup, Extension
+from packaging.version import Version
+from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
 import numpy as np
 
+def get_system_architecture():
+    """
+    Determine the VCPKG_TARGET_TRIPLET and CMAKE_OSX_ARCHITECTURES based on host OS.
+    """
+    system = platform.system()
+    machine = platform.machine()
+
+    if system == "Darwin":
+        if machine == "arm64":
+            return "arm64-osx", "arm64"
+        else:
+            return "x64-osx", "x86_64"
+    elif system == "Linux":
+        return "x64-linux", ""
+    elif system == "Windows":
+        return "x64-windows-static-md", ""
+    else:
+        raise RuntimeError(f"Unsupported platform: {system}")
+
 
 class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=""):
-        Extension.__init__(self, name, sources=[])
+    def __init__(self, name, sourcedir=''):
+        super().__init__(name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
 
 
@@ -38,90 +56,71 @@ class CMakeBuild(build_ext):
     def run(self):
         try:
             out = subprocess.check_output(['cmake', '--version'])
+            print(out.decode())
         except OSError:
-            raise RuntimeError("CMake must be installed to build the following extensions: " +
+            raise RuntimeError("CMake must be installed to build the following extensions: "
                                ", ".join(e.name for e in self.extensions))
-
-        if platform.system() == "Windows":
-            cmake_version = LooseVersion(re.search(r'version\s*([\d.]+)', out.decode()).group(1))
-            if cmake_version < '3.1.0':
-                raise RuntimeError("CMake >= 3.1.0 is required on Windows")
 
         for ext in self.extensions:
             self.build_extension(ext)
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-
-        #cfg = 'Debug' if self.debug else 'Release'
-        cfg = 'Release'  # We build only in release mode
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(extdir),
             '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
-            '-DEXAMPLE_VERSION_INFO={}'.format(self.distribution.get_version()),
-            '-DCMAKE_BUILD_TYPE={}'.format(cfg),  # not used on MSVC, but no harm
+            '-DVERSION_INFO={}'.format(self.distribution.get_version()),
+            '-DCMAKE_BUILD_TYPE=Release',
             '-DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake',
+            f'-DVCPKG_TARGET_TRIPLET={vcpkg_triplet}',
             '-DPython_NumPy_INCLUDE_DIR={}'.format(np.get_include()),
             '-DTBB_TEST=OFF',
-            '-DTBBMALLOC_BUILD=OFF'
-            '-DTBBMALLOC_PROXY_BUILD=OFF'
-            '-DBUILD_SHARED_LIBS=OFF']
+            '-DTBBMALLOC_BUILD=OFF',
+            '-DTBBMALLOC_PROXY_BUILD=OFF',
+            '-DBUILD_SHARED_LIBS=OFF'
+        ]
 
-        build_args = ['--config', cfg]
+        if osx_arch:
+            cmake_args.append('-DCMAKE_OSX_ARCHITECTURES={}'.format(osx_arch))
+
+        build_args = ['--config', 'Release']
 
         if platform.system() == "Windows":
-            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(), extdir)]
-            #build_args += ['-S . -B', '/m']
-            cmake_args += ['-DVCPKG_TARGET_TRIPLET=x64-windows-static-md']
+            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE={}'.format(extdir)]
+            build_args += ['--', '/m']
         else:
-            cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
+            cmake_args += ['-DCMAKE_BUILD_TYPE=Release']
             build_args += ['--', '-j2']
 
-        if platform.system() == "Darwin":
-            cmake_args += ['-DVCPKG_TARGET_TRIPLET=x64-osx']
-
-        if platform.system() == "Linux":
-            cmake_args += ['-DVCPKG_TARGET_TRIPLET=x64-linux']
-
         env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get('CXXFLAGS', ''),
-                                                              self.distribution.get_version())
+        env['VCPKG_TARGET_TRIPLET'] = vcpkg_triplet
+        env['CMAKE_OSX_ARCHITECTURES'] = osx_arch
+
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd='build/',
-                              env=env)  # Previously: cwd=self.build_temp
-        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd='build/')
 
+        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
+        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
 
-version = 'dev'
-
-commit_var = 'APPVEYOR_REPO_COMMIT'
-tag_name_var = 'APPVEYOR_REPO_TAG_NAME'
-
-if commit_var in os.environ and os.environ[commit_var]:
-    version = "0.0.0-" + os.environ[commit_var]
-
-if tag_name_var in os.environ and os.environ[tag_name_var]:
-    version = os.environ[tag_name_var]
-
+vcpkg_triplet, osx_arch = get_system_architecture()
 
 setup(
-    name="PyPupilEXT",
-    version="0.0.1",
-    author="Moritz Lode, Babak Zandi",
-    author_email="",
-    description="Pupil detection library for Python inlcuding algorithms and camera calibration routines.",
-    long_description="",
-    ext_modules=[CMakeExtension("pypupilext._pypupil")],
-    cmdclass={"build_ext": CMakeBuild},
+    name='PyPupilEXT',
+    version='0.0.1',
+    author='Moritz Lode, Babak Zandi',
+    author_email='',
+    description='Pupil detection library for Python including algorithms and camera calibration routines.',
+    long_description='',
+    ext_modules=[CMakeExtension('pypupilext._pypupil', sourcedir='')],
+    cmdclass={'build_ext': CMakeBuild},
     zip_safe=False,
-    packages=['pypupilext'],
-    setup_requires=['cmake', 'wheel'],
+    packages=find_packages(),
+    setup_requires=['wheel', 'cmake'],
     install_requires=[
         'numpy',
         'opencv-python'
     ],
     python_requires='>=3.7',
     include_package_data=True,
-    package_data={'pypupilext': ['*.dylib']},
+    package_data={'pypupilext': ['*.dylib']}
 )

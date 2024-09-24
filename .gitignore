@@ -32,3 +32,5 @@ parts/
 sdist/
 var/
 wheels/
+
+build/
