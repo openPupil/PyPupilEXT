@@ -254,6 +254,7 @@ if(SPII_BUILD_MODE_VAR)
     find_library(spii_LIBRARY_RELEASE
     spii
     PATHS ${CMAKE_BINARY_DIR}/lib/)
+    message(STATUS "CMAKE_Binary_dir: ${CMAKE_BINARY_DIR}")
 
     find_library(meschach_LIBRARY_RELEASE
     meschach
