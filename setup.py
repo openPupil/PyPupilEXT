@@ -78,6 +78,10 @@ class CMakeBuild(build_ext):
         # extdir = os.path.abspath(os.path.dirname(
         #    self.get_ext_fullpath(ext.name)))
         extdir = get_python_site_packages()  # Site packages directory for installation
+        # Ensure the path includes 'pypupilext'
+        extdir = os.path.join(extdir, 'pypupilext')
+        # Create the directory if it does not exist
+        os.makedirs(extdir, exist_ok=True)
 
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(extdir),
