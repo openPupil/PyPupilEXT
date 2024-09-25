@@ -129,7 +129,7 @@ Now you can use the PyPupilEXT package in Python and proceed with the examples p
 
    Other important commands while building the *.whl file on ubuntu
    ```shell
-   rm -rf PyPupilEXT.egg-info .eggs build && mkdir build && cd build # Rmove these folders
+   rm -rf PyPupilEXT.egg-info .eggs build dist && mkdir build && cd build # Rmove these folders
    ```
 
 #### D) The advanced way of installing PyPupilEXT if nothing works

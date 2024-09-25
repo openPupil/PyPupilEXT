@@ -47,6 +47,15 @@ def get_system_architecture():
         raise RuntimeError(f"Unsupported platform: {system}")
 
 
+def get_python_site_packages():
+    """
+    Get the site-packages directory for the current Python environment.
+    """
+    python_version = "{}.{}".format(
+        sys.version_info.major, sys.version_info.minor)
+    return os.path.join(sys.prefix, 'lib', 'python' + python_version, 'site-packages')
+
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
         super().__init__(name, sources=[])
@@ -66,8 +75,10 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(
-            self.get_ext_fullpath(ext.name)))
+        # extdir = os.path.abspath(os.path.dirname(
+        #    self.get_ext_fullpath(ext.name)))
+        extdir = get_python_site_packages()  # Site packages directory for installation
+
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(extdir),
             '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
