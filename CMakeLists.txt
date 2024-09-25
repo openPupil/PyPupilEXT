@@ -185,6 +185,14 @@ find_package(glog CONFIG REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(OpenMP)
 
+if(OpenMP_FOUND)
+    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
+    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
+    message(STATUS "OpenMP found: ${OpenMP_CXX_FLAGS}, ${OpenMP_EXE_LINKER_FLAGS}")
+else()
+    message("OpenMP not found")
+endif()
+
 # ========================================================================
 # Check if everything was found correctly for each used package ==========
 # ========================================================================
@@ -257,7 +265,7 @@ else()
                        -DBUILD_SHARED_LIBS=OFF -DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
-ExternalProject_Add(Build_TBB
+ExternalProject_Add(Build_SPII
     PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/soii
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/spii
     TMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/tmp
@@ -311,7 +319,7 @@ include_directories(${OpenCV_INCLUDE_DIRS}
         ${EIGEN_INCLUDE_DIR}
         ${CERES_INCLUDE_DIRS}
         ${pybind11_INCLUDE_DIR}
-        ${OMP_INCLUDE_DIRS}
+        #${OMP_INCLUDE_DIRS}
         "src/singleeyefitter"
         "src/pupil-detection-methods")
 
@@ -340,9 +348,8 @@ target_link_libraries(_pypupil PRIVATE
         ${Boost_LIBRARIES}
         ${TBB_LIBRARIES}
         ${spii_LIBRARIES}
-        ${CERES_LIBRARIES}
-        ${OMP_LIBRARIES}  # Speicher sicherstellen, dass OMP_LIBRARIES gesetzt ist
-        $<$<PLATFORM_ID:Linux>:OpenMP::OpenMP_CXX>)  # Link OpenMP auf Linux-Systemen
+        ${CERES_LIBRARIES})
+        #${OMP_LIBRARIES})
 
 
 
