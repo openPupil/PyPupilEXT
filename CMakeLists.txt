@@ -120,11 +120,11 @@ else()
 endif()
 
 ExternalProject_Add(Build_TBB
-    PREFIX ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
+    PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
-    TMP_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/tmp
-    STAMP_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/stamp
-    LOG_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/log
+    TMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/tmp
+    STAMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/stamp
+    LOG_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/log
     BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
     INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/install
     CMAKE_ARGS ${TBB_CMAKE_ARGS}
@@ -137,7 +137,6 @@ set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
 # find_package will not work with externalProject_Add. The libs need to be added manually
 # Source of the following code suggestion:
 # https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
-
 set(TBB_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/")
 if(APPLE)
     set(prefix "lib")
