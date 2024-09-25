@@ -11,10 +11,10 @@ site_packages_path = os.path.join(sys.prefix, 'lib', 'python{}.{}'.format(
 if site_packages_path not in sys.path:
     sys.path.append(site_packages_path)
 
-print(f"Current sys.path: {sys.path}")
-print(f"Current __file__ path: {os.path.abspath(__file__)}")
+# print(f"Current sys.path: {sys.path}")
+# print(f"Current __file__ path: {os.path.abspath(__file__)}")
 pypupilext_path = os.path.dirname(os.path.abspath(__file__))
-print(f"Current pypupilext directory contents: {os.listdir(pypupilext_path)}")
+# print(f"Current pypupilext directory contents: {os.listdir(pypupilext_path)}")
 
 # Importieren der Python-Module
 
