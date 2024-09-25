@@ -26,6 +26,7 @@ from setuptools.command.build_ext import build_ext
 
 import numpy as np
 
+
 def get_system_architecture():
     """
     Determine the VCPKG_TARGET_TRIPLET and CMAKE_OSX_ARCHITECTURES based on host OS.
@@ -65,7 +66,8 @@ class CMakeBuild(build_ext):
             self.build_extension(ext)
 
     def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
+        extdir = os.path.abspath(os.path.dirname(
+            self.get_ext_fullpath(ext.name)))
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(extdir),
             '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
@@ -86,11 +88,12 @@ class CMakeBuild(build_ext):
         build_args = ['--config', 'Release']
 
         if platform.system() == "Windows":
-            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE={}'.format(extdir)]
+            cmake_args += [
+                '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE={}'.format(extdir)]
             build_args += ['--', '/m']
         else:
             cmake_args += ['-DCMAKE_BUILD_TYPE=Release']
-            build_args += ['--', '-j2']
+            build_args += ['--', '-j1']
 
         env = os.environ.copy()
         env['VCPKG_TARGET_TRIPLET'] = vcpkg_triplet
@@ -98,13 +101,16 @@ class CMakeBuild(build_ext):
         if osx_arch:
             env['CMAKE_OSX_ARCHITECTURES'] = osx_arch
         else:
-            env['CMAKE_SYSTEM_PROCESSOR']= osx_arch
+            env['CMAKE_SYSTEM_PROCESSOR'] = osx_arch
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
+        subprocess.check_call(['cmake', ext.sourcedir] +
+                              cmake_args, cwd=self.build_temp, env=env)
+        subprocess.check_call(['cmake', '--build', '.'] +
+                              build_args, cwd=self.build_temp)
+
 
 vcpkg_triplet, osx_arch = get_system_architecture()
 
@@ -126,5 +132,5 @@ setup(
     ],
     python_requires='>=3.7',
     include_package_data=True,
-    package_data={'pypupilext': ['*.dylib']}
+    package_data={'pypupilext': ['*.so', '*.dylib']}
 )
