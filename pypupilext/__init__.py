@@ -11,9 +11,10 @@ site_packages_path = os.path.join(sys.prefix, 'lib', 'python{}.{}'.format(
 if site_packages_path not in sys.path:
     sys.path.append(site_packages_path)
 
-# Debug-Ausgabe für den Pfad
 print(f"Current sys.path: {sys.path}")
 print(f"Current __file__ path: {os.path.abspath(__file__)}")
+pypupilext_path = os.path.dirname(os.path.abspath(__file__))
+print(f"Current pypupilext directory contents: {os.listdir(pypupilext_path)}")
 
 # Importieren der Python-Module
 
@@ -22,5 +23,10 @@ try:
     from ._pypupil import *
     print("_pypupil module successfully imported.")
 except ImportError as e:
+    # Erweiterte Fehlermeldung
     print(f"Failed to import _pypupil module: {e}")
+    import traceback
+    traceback.print_exc()
+    print(
+        f"Current directory contents: {os.listdir(os.path.dirname(os.path.abspath(__file__)))}")
     raise
