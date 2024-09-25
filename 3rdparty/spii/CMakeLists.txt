@@ -37,7 +37,7 @@ if(APPLE)
   set(OMP_INCLUDE_DIR "/usr/local/Cellar/libomp/14.0.6/include")
   set(OMP_LIB_DIR "/usr/local/Cellar/libomp/14.0.6/lib")
 elseif(UNIX AND NOT APPLE)
-  set(OMP_INCLUDE_DIR "/usr/lib/llvm-14/lib/clang/14.0.0/include")
+  set(OMP_INCLUDE_DIR "/usr/lib/llvm-14/include")
   set(OMP_LIB_DIR "/usr/lib/llvm-14/lib")
   endif()
 
