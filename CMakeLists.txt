@@ -239,59 +239,64 @@ set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGE
 set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 
 # ========================================================================
-# Adjustments for spii - =================================================
+# Build SPII - ===========================================================
 # ========================================================================
-set(spii_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/spii/include/")
-set(spii_LIB_DIR lib)
-set(SPII_INSTALL_DIR "3rdparty/spii/build")
-set(spii_LIB_NAME 3rdparty/spii)
-
-if(SPII_BUILD_MODE_VAR)
-# Automatic build for spii
-    message(STATUS "--------------------- SPII automatic mode ---------------------")
-    # Check install status of the library
-    find_library(spii_LIBRARY_RELEASE
-    spii
-    PATHS ${CMAKE_BINARY_DIR}/lib/)
-    message(STATUS "CMAKE_Binary_dir: ${CMAKE_BINARY_DIR}")
-
-    find_library(meschach_LIBRARY_RELEASE
-    meschach
-    PATHS ${CMAKE_BINARY_DIR}/lib/)
-
-    if(spii_LIBRARY_RELEASE AND meschach_LIBRARY_RELEASE)
-        message(STATUS "--------------------- SPII found (automatic) ---------------------")
-        set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
-        message(STATUS "Libraries: ${spii_LIBRARIES}")
-        set(SPII_BUILD_FOUND TRUE)
-    else()
-        message(STATUS "--------------------- SPII not found, will be installed (automatic) ---------------------")
-        add_subdirectory(${spii_LIB_NAME})
-        link_directories(${CMAKE_BINARY_DIR}/lib)
-        set(spii_LIBRARIES "")
-    endif()
-else()
-# Manual build for spii
-message(STATUS "--------------------- SPII manual mode ---------------------")
-    find_library(spii_LIBRARY_RELEASE
-            spii
-            PATHS ${spii_LIB_NAME}/lib/)
-    find_library(meschach_LIBRARY_RELEASE
-            meschach
-            PATHS ${spii_LIB_NAME}/lib/)
-    if (spii_LIBRARY_RELEASE AND meschach_LIBRARY_RELEASE)
-        set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
-        set(SPII_BUILD_FOUND TRUE)
-        message(STATUS "--------------------- SPII was found ---------------------")
-        message(STATUS "Libraries: ${spii_LIBRARIES}")
-        message(STATUS "--------------------------------------------------------" )
-    else()
-        set(spii_LIBRARIES "")
-        set(SPII_BUILD_FOUND TRUE)
-        message(STATUS "-------------- WARNING SPII NOT FOUND: PLEASE INSTALL SPII LIBS! ---------------------")
-        message(STATUS "-------------- WARNING SPII NOT FOUND: PLEASE INSTALL SPII LIBS! ---------------------")
-    endif()
+if(APPLE)
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # macOS
+elseif(UNIX AND NOT APPLE)
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # Linux
+elseif(MSVC OR WIN32)
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
 endif()
+
+if(APPLE)
+    set(SPII_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
+                       -DBUILD_SHARED_LIBS=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
+else()
+    set(SPII_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
+                       -DBUILD_SHARED_LIBS=OFF -DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
+ExternalProject_Add(Build_TBB
+    PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/soii
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/spii
+    TMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/tmp
+    STAMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/stamp
+    LOG_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/log
+    BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
+    INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/install
+    CMAKE_ARGS ${TBB_CMAKE_ARGS}
+    BUILD_BYPRODUCTS ${SPII_BUILD_BYPRODUCTS}
+)
+
+set(SPII_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build/lib/cmake/spii/")  # Setting the module paths to the <package-name>config.cmake files for each lib
+set(SPII_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/spii/include")
+
+# find_package will not work with externalProject_Add. The libs need to be added manually
+# Source of the following code suggestion:
+# https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+set(SPII_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build/lib/")
+if(APPLE)
+    set(prefix "lib")
+    set(suffix ".a")
+elseif(MSVC OR WIN32)
+    set(prefix "")
+    set(suffix ".lib")
+elseif(UNIX AND NOT APPLE)
+    set(prefix "lib")
+    set(suffix ".a")  # Statische Bibliothek für Linux
+endif()
+
+
+link_directories(${SPII_LIB_DIR})
+
+# Source of the following code suggestion:
+# https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+set(SPII_LIBRARIES # currently only libtbb.a (libtbbmalloc.a omitted as not needed)
+  "${SPII_LIB_DIR}${prefix}spii${suffix}")
+
+message(STATUS "SPII_LIB_DIR: ${SPII_LIB_DIR}")
+message(STATUS "SPII_LIBRARIES: ${SPII_LIBRARIES}")
 
 
 # ========================================================================
