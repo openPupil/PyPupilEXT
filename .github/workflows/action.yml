@@ -52,6 +52,7 @@ jobs:
           python -m pip install setuptools
           python -m pip install ninja
           python -m pip install cmake
+          python -m pip install packaging
 
       - name: Restore artifacts, or setup vcpkg (All-Systems)
         uses: lukka/run-vcpkg@v10
