@@ -8,6 +8,7 @@ This repository provides a python wrapper to the open-source pupillometry system
 
 The PyPupilEXT package is authored by Moritz Lode and Babak Zandi from the Technical University of Darmstadt.<br/>
 
+
 More information about our open-source pupillometry project can be found here: [https://github.com/openPupil/Open-PupilEXT](https://github.com/openPupil/Open-PupilEXT)<br/>
 
 **Caution:** This project and its repository is under development and currently in an experimental stage.<br/>
