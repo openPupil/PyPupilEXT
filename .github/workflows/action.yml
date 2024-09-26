@@ -19,8 +19,9 @@ jobs:
       - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Clone GitHub repository
+        run: |
+          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 
       - uses: knicknic/os-specific-run@v1.0.4
         with:
