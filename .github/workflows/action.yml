@@ -1,30 +1,28 @@
+name: Build and Test
+
 on:
   push:
     branches:
       - main
-    #branches-ignore:
-    #  - "**"
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} for ${{ matrix.python_version }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
-        #os: [Windows, macOS]
-        os: [macOS]
+        os: [macos]
         python_version: ["3.9", "3.10"]
 
     steps:
       - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
 
-      - name: Clone GitHub repository
-        run: |
-          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: knicknic/os-specific-run@v1.0.3
+      - uses: knicknic/os-specific-run@v1.0.4
         with:
           macos: |
             echo "Starting on macOS"
@@ -41,10 +39,19 @@ jobs:
           windows: |
             echo "Starting on Windows"
 
-      - uses: actions/setup-python@v3
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python_version }}
-          architecture: x64
+
+      - name: Install python build requirements
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install wheel
+          python -m pip install numpy
+          python -m pip install setuptools
+          python -m pip install ninja
+          python -m pip install cmake
 
       - name: Restore artifacts, or setup vcpkg (All-Systems)
         uses: lukka/run-vcpkg@v10
@@ -54,21 +61,12 @@ jobs:
           runVcpkgInstall: false
           vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512"
 
-      - name: Install python build requirements (All-Systems)
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install wheel
-          python -m pip install numpy
-          python -m pip install setuptools
-          python -m pip install ninja
-          python -m pip install cmake
-
-      - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }} (All-Systems)
+      - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
           cd PyPupilEXT
           python setup.py sdist bdist_wheel
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           path: PyPupilEXT/dist/
