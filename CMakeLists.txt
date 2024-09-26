@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(PupilEXT)
 
-#set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)  # Ensure C++17 standard is used
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
@@ -67,12 +67,15 @@ if(APPLE)
 
     if(NOT DEFINED ENV{CMAKE_OSX_ARCHITECTURES})
          message(FATAL_ERROR "CMAKE_OSX_ARCHITECTURES environment variable is not set.")
-     endif()
-
-elseif(MSVC OR WIN32 OR UNIX)
+    endif()
+elseif(MSVC OR WIN32)
     message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(VCPKG_TARGET_TRIPLET $ENV{VCPKG_TARGET_TRIPLET} CACHE STRING "")
-
+elseif(UNIX AND NOT APPLE)  # UNIX corresponds to Linux systems
+    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
+    find_package(OpenMP REQUIRED)
+    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
+    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
 # ========================================================================
@@ -96,42 +99,56 @@ add_subdirectory(${TBB_LIB_NAME})
 
 include(ExternalProject)
 
+if(APPLE)
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a")  # macOS
+elseif(UNIX AND NOT APPLE)
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a")  # Linux
+    set(ARCHITECTURE_OPTION "-DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}")
+elseif(MSVC OR WIN32)
+    set(TBB_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
+    set(ARCHITECTURE_OPTION "-DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+if(APPLE)
+    set(TBB_CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
+                       -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF
+                       -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
+else()
+    set(TBB_CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
+                       -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF
+                       -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
 ExternalProject_Add(Build_TBB
-    PREFIX ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
+    PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB
-    TMP_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/tmp
-    STAMP_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/stamp
-    LOG_DIR ${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/log
+    TMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/tmp
+    STAMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/stamp
+    LOG_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/log
     BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build
     INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/install
-    CMAKE_ARGS -DTBB_TEST=OFF -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build -DBUILD_SHARED_LIBS=OFF -DTBBMALLOC_BUILD=OFF -DTBBMALLOC_PROXY_BUILD=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-    BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libtbb.a"
+    CMAKE_ARGS ${TBB_CMAKE_ARGS}
+    BUILD_BYPRODUCTS ${TBB_BUILD_BYPRODUCTS}
 )
 
-set(TBB_DIR "${PROJECT_SOURCE_DIR}build/3rdparty/oneTBB/build/lib/cmake/TBB/") # Setting the module paths to the <package-name>config.cmake files for each lib
+set(TBB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/cmake/TBB/")  # Setting the module paths to the <package-name>config.cmake files for each lib
 set(TBB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/oneTBB/include")
 
 # find_package will not work with externalProject_Add. The libs need to be added manually
 # Source of the following code suggestion:
 # https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
-
 set(TBB_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/oneTBB/build/lib/")
 if(APPLE)
-    message(STATUS "--------------------- SYSTEM MACOSX ---------------------")
     set(prefix "lib")
     set(suffix ".a")
 elseif(MSVC OR WIN32)
-    message(STATUS "--------------------- SYSTEM WINDOWS ---------------------")
     set(prefix "")
     set(suffix ".lib")
 elseif(UNIX AND NOT APPLE)
-    message(STATUS "--------------------- SYSTEM LINUX ---------------------")
-    find_package(OpenMP REQUIRED)  # Ensure OpenMP is found on Linux systems
-    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")  # Set the OpenMP flags
-    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
     set(prefix "lib")
-    set(suffix ".so")  # Shared library suffix for Linux
+    set(suffix ".a")  # Statische Bibliothek für Linux
 endif()
+
 
 link_directories(${TBB_LIB_DIR})
 
@@ -139,6 +156,10 @@ link_directories(${TBB_LIB_DIR})
 # https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
 set(TBB_LIBRARIES # currently only libtbb.a (libtbbmalloc.a omitted as not needed)
   "${TBB_LIB_DIR}${prefix}tbb${suffix}")
+
+message(STATUS "TBB_LIB_DIR: ${TBB_LIB_DIR}")
+message(STATUS "TBB_LIBRARIES: ${TBB_LIBRARIES}")
+
 
 # ========================================================================
 # Other adjustments  =====================================================
@@ -163,6 +184,14 @@ find_package(Ceres CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(OpenMP)
+
+if(OpenMP_FOUND)
+    set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
+    set(OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS}")
+    message(STATUS "OpenMP found: ${OpenMP_CXX_FLAGS}, ${OpenMP_EXE_LINKER_FLAGS}")
+else()
+    message("OpenMP not found")
+endif()
 
 # ========================================================================
 # Check if everything was found correctly for each used package ==========
@@ -218,58 +247,64 @@ set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGE
 set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 
 # ========================================================================
-# Adjustments for spii -==================================================
+# Build SPII - ===========================================================
 # ========================================================================
-set(spii_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/spii/include/")
-set(spii_LIB_DIR lib)
-set(SPII_INSTALL_DIR "3rdparty/spii/build")
-set(spii_LIB_NAME 3rdparty/spii)
-
-if(SPII_BUILD_MODE_VAR)
-# Automatic build for spii
-    message(STATUS "--------------------- SPII automatic mode ---------------------")
-    # Check install status of the library
-    find_library(spii_LIBRARY_RELEASE
-    spii
-    PATHS ${CMAKE_BINARY_DIR}/lib/)
-
-    find_library(meschach_LIBRARY_RELEASE
-    meschach
-    PATHS ${CMAKE_BINARY_DIR}/lib/)
-
-    if(spii_LIBRARY_RELEASE AND meschach_LIBRARY_RELEASE)
-        message(STATUS "--------------------- SPII found (automatic) ---------------------")
-        set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
-        message(STATUS "Libraries: ${spii_LIBRARIES}")
-        set(SPII_BUILD_FOUND TRUE)
-    else()
-        message(STATUS "--------------------- SPII not found, will be installed (automatic) ---------------------")
-        add_subdirectory(${spii_LIB_NAME})
-        link_directories(${CMAKE_BINARY_DIR}/lib)
-        set(spii_LIBRARIES "")
-    endif()
-else()
-# Manual build for spii
-message(STATUS "--------------------- SPII manual mode ---------------------")
-    find_library(spii_LIBRARY_RELEASE
-            spii
-            PATHS ${spii_LIB_NAME}/lib/)
-    find_library(meschach_LIBRARY_RELEASE
-            meschach
-            PATHS ${spii_LIB_NAME}/lib/)
-    if (spii_LIBRARY_RELEASE AND meschach_LIBRARY_RELEASE)
-        set(spii_LIBRARIES ${spii_LIBRARY_RELEASE} ${meschach_LIBRARY_RELEASE})
-        set(SPII_BUILD_FOUND TRUE)
-        message(STATUS "--------------------- SPII was found ---------------------")
-        message(STATUS "Libraries: ${spii_LIBRARIES}")
-        message(STATUS "--------------------------------------------------------" )
-    else()
-        set(spii_LIBRARIES "")
-        set(SPII_BUILD_FOUND TRUE)
-        message(STATUS "-------------- WARNING SPII NOT FOUND: PLEASE INSTALL SPII LIBS! ---------------------")
-        message(STATUS "-------------- WARNING SPII NOT FOUND: PLEASE INSTALL SPII LIBS! ---------------------")
-    endif()
+if(APPLE)
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # macOS
+elseif(UNIX AND NOT APPLE)
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # Linux
+elseif(MSVC OR WIN32)
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
 endif()
+
+if(APPLE)
+    set(SPII_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
+                       -DBUILD_SHARED_LIBS=OFF -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
+else()
+    set(SPII_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
+                       -DBUILD_SHARED_LIBS=OFF -DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
+ExternalProject_Add(Build_SPII
+    PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/soii
+    SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/spii
+    TMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/tmp
+    STAMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/stamp
+    LOG_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/log
+    BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
+    INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/install
+    CMAKE_ARGS ${TBB_CMAKE_ARGS}
+    BUILD_BYPRODUCTS ${SPII_BUILD_BYPRODUCTS}
+)
+
+set(SPII_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build/lib/cmake/spii/")  # Setting the module paths to the <package-name>config.cmake files for each lib
+set(SPII_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/spii/include")
+
+# find_package will not work with externalProject_Add. The libs need to be added manually
+# Source of the following code suggestion:
+# https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+set(SPII_LIB_DIR "${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build/lib/")
+if(APPLE)
+    set(prefix "lib")
+    set(suffix ".a")
+elseif(MSVC OR WIN32)
+    set(prefix "")
+    set(suffix ".lib")
+elseif(UNIX AND NOT APPLE)
+    set(prefix "lib")
+    set(suffix ".a")  # Statische Bibliothek für Linux
+endif()
+
+
+link_directories(${SPII_LIB_DIR})
+
+# Source of the following code suggestion:
+# https://stackoverflow.com/questions/6351609/cmake-linking-to-library-downloaded-from-externalproject-add
+set(SPII_LIBRARIES # currently only libtbb.a (libtbbmalloc.a omitted as not needed)
+  "${SPII_LIB_DIR}${prefix}spii${suffix}")
+
+message(STATUS "SPII_LIB_DIR: ${SPII_LIB_DIR}")
+message(STATUS "SPII_LIBRARIES: ${SPII_LIBRARIES}")
 
 
 # ========================================================================
@@ -284,9 +319,15 @@ include_directories(${OpenCV_INCLUDE_DIRS}
         ${EIGEN_INCLUDE_DIR}
         ${CERES_INCLUDE_DIRS}
         ${pybind11_INCLUDE_DIR}
-        ${OMP_INCLUDE_DIRS}
+        #${OMP_INCLUDE_DIRS}
         "src/singleeyefitter"
         "src/pupil-detection-methods")
+
+# Add OpenMP flags for Linux
+if(UNIX AND NOT APPLE)  # Linux Systeme
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")  # OpenMP Flags setzen
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")  # Linker Flags setzen
+endif()
 
 pybind11_add_module(_pypupil
         src/main.cpp
@@ -308,6 +349,9 @@ target_link_libraries(_pypupil PRIVATE
         ${TBB_LIBRARIES}
         ${spii_LIBRARIES}
         ${CERES_LIBRARIES})
+        #${OMP_LIBRARIES})
+
+
 
 # See here for more information:
 # https://stackoverflow.com/questions/48142082/cmake-externalproject-add-project-not-building-before-targets-that-depend-on-it
@@ -320,11 +364,10 @@ add_dependencies(_pypupil Build_TBB)
 message(STATUS "")
 message(STATUS "--- Include directories ---" )
 message(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
-message(STATUS "Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
 message(STATUS "TBB_INCLUDE_DIR: ${TBB_INCLUDE_DIR}")
-message(STATUS "TBB_LIB: ${TBB_LIBRARIES}")
-message(STATUS "spii_INCLUDE_DIR: ${spii_INCLUDE_DIR}")
-message(STATUS "EIGEN_INCLUDE_DIR: ${EIGEN_INCLUDE_DIR}")
+message(STATUS "Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
+message(STATUS "Spii_INCLUDE_DIR: ${spii_INCLUDE_DIR}")
+message(STATUS "Eigen_INCLUDE_DIR: ${EIGEN_INCLUDE_DIR}")
 message(STATUS "CERES_INCLUDE_DIRS: ${CERES_INCLUDE_DIRS}")
 message(STATUS "pybind11_INCLUDE_DIR: ${pybind11_INCLUDE_DIR}")
 message(STATUS "---------------------------")

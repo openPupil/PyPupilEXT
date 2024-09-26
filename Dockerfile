@@ -45,8 +45,13 @@ RUN apt-get update && \
     libxdamage-dev \
     nasm \
     libomp-dev \
+    libomp5 \
     libeigen3-dev && \
     apt-get clean
+
+# Setzen der LD_LIBRARY_PATH-Umgebungsvariable
+ENV LD_LIBRARY_PATH="/usr/lib/llvm-14/lib:${LD_LIBRARY_PATH}"
+
 
 # Install Miniconda with a reliable installation method
 RUN wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh && \

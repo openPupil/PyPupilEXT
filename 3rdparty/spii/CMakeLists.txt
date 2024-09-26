@@ -19,6 +19,8 @@ list(APPEND SEARCH_LIBS /usr/local/lib)
 list(APPEND SEARCH_LIBS /usr/local/homebrew/lib) # Mac OS X
 list(APPEND SEARCH_LIBS /opt/local/lib)
 list(APPEND SEARCH_LIBS /usr/local/Cellar/libomp/14.0.6/lib)
+list(APPEND SEARCH_LIBS /usr/lib/x86_64-linux-gnu)
+list(APPEND SEARCH_LIBS /usr/lib/llvm-14/lib)
 
 list(APPEND SEARCH_HEADERS /usr/include)
 list(APPEND SEARCH_HEADERS /usr/local/include)
@@ -27,9 +29,18 @@ list(APPEND SEARCH_HEADERS /opt/local/include)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp/14.0.6/include)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar/libomp)
 list(APPEND SEARCH_HEADERS /usr/local/Cellar)
+list(APPEND SEARCH_HEADERS /usr/lib/gcc/x86_64-linux-gnu/11/include)
+list(APPEND SEARCH_HEADERS /usr/lib/llvm-14/lib/clang/14.0.0/include)
 
-set(OMP_INCLUDE_DIR "/usr/local/Cellar/libomp/14.0.6/include")
-set(OMP_LIB_DIR "/usr/local/Cellar/libomp/14.0.6/lib")
+
+if(APPLE)
+  set(OMP_INCLUDE_DIR "/usr/local/Cellar/libomp/14.0.6/include")
+  set(OMP_LIB_DIR "/usr/local/Cellar/libomp/14.0.6/lib")
+elseif(UNIX AND NOT APPLE)
+  set(OMP_INCLUDE_DIR "/usr/lib/llvm-14/include")
+  set(OMP_LIB_DIR "/usr/lib/llvm-14/lib")
+  endif()
+
 link_directories(${OMP_LIB_DIR})
 
 enable_testing()
@@ -89,10 +100,13 @@ set (SPII_LIBRARY_DEPENDENCIES)
 
 # OpenMP needs to be included as a library on some platforms.
 if (OPENMP_FOUND)
-  if (NOT MSVC)
+  if (APPLE)
     #list(APPEND SPII_LIBRARY_DEPENDENCIES gomp)
     list(APPEND SPII_LIBRARY_DEPENDENCIES libomp)
   endif (NOT MSVC)
+  if(UNIX AND NOT APPLE)
+    list(APPEND SPII_LIBRARY_DEPENDENCIES omp)
+  endif(UNIX AND NOT APPLE)
 endif ()
 
 # Change the default build type from Debug to Release, while still
