@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build Wheels
 
 on:
   push:
@@ -62,7 +62,7 @@ jobs:
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
           vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512"
-        
+
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
           ls -l
