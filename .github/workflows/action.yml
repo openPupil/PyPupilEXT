@@ -12,8 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos]
-        python_version: ["3.10", "3.11"]
+        os: [macos-latest]
+        python_version: ["3.9","3.10"]
 
     steps:
       - name: Get latest Cmake and ninja (All-Systems)
@@ -35,6 +35,7 @@ jobs:
             brew install libomp
             brew install libmpc
             brew install tree
+            brew install libxcb
           linux: |
             echo "Starting on Linux"
           windows: |
