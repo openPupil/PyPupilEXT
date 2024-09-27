@@ -77,11 +77,13 @@ class CMakeBuild(build_ext):
     def build_extension(self, ext):
         # extdir = os.path.abspath(os.path.dirname(
         #    self.get_ext_fullpath(ext.name)))
-        extdir = get_python_site_packages()  # Site packages directory for installation
+        # extdir = get_python_site_packages()  # Site packages directory for installation
         # Ensure the path includes 'pypupilext'
-        extdir = os.path.join(extdir, 'pypupilext')
+        # extdir = os.path.join(extdir, 'pypupilext')
         # Create the directory if it does not exist
-        os.makedirs(extdir, exist_ok=True)
+        # os.makedirs(extdir, exist_ok=True)
+        extdir = os.path.abspath(os.path.dirname(
+            self.get_ext_fullpath(ext.name)))
 
         cmake_args = [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(extdir),
@@ -96,6 +98,8 @@ class CMakeBuild(build_ext):
             '-DTBBMALLOC_PROXY_BUILD=OFF',
             '-DBUILD_SHARED_LIBS=OFF'
         ]
+
+        os.makedirs(extdir, exist_ok=True)
 
         if osx_arch:
             cmake_args.append('-DCMAKE_OSX_ARCHITECTURES={}'.format(osx_arch))

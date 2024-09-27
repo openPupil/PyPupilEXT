@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos]
-        python_version: ["3.9", "3.10"]
+        python_version: ["3.10", "3.11"]
 
     steps:
       - name: Get latest Cmake and ninja (All-Systems)
