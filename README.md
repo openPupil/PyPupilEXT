@@ -6,7 +6,7 @@
 
 This repository provides a python wrapper to the open-source pupillometry system PupilEXT ([Link](https://github.com/openPupil/)). The binding module is created using [Pybind11](https://github.com/pybind/pybind11). PyPupilEXT allows to measure the pupil diameter from images that were captured by stereo- and mono camera systems. The pupil diameter can be detected using one of the state-of-the-art open-source algorithms, Starburst [[1\]](#1), Swirski2D [[2\]](#2), ExCuSe [[3\]](#3), ElSe [[4\]](#4), PuRe [[5\]](#5), and PuReST [[6\]](#6).<br/>
 
-The PyPupilEXT package is authored by Moritz Lode and Babak Zandi from the Technical University of Darmstadt.<br/>
+The PyPupilEXT package is authored by Moritz Lode and Babak Zandi from the Technical University of Darmstadt..<br/>
 
 
 More information about our open-source pupillometry project can be found here: [https://github.com/openPupil/Open-PupilEXT](https://github.com/openPupil/Open-PupilEXT)<br/>
