@@ -2,7 +2,7 @@ name: pypupilenv
 channels:
   - defaults
 dependencies:
-  - python=3.9
+  - python=3.10
   - numpy=1.26.4
   - matplotlib=3.8.4
   - pandas=2.2.2

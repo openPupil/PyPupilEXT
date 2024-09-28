@@ -65,6 +65,22 @@ pip install PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl
 
 Now you can use the PyPupilEXT package in Python and proceed with the examples provided section two.
 
+#### Create relase in GithUb
+
+Example:
+
+Change the version number inside the following files:
+- Create a new file in the folder realese_notes, conataining the notes.
+- Change the version in the file setup.py
+- Change `body_path: release_notes/release_notes_v0.0.1.md`` in .github/workflows/action.yml
+
+```bash
+# Hinzufügen einer Datei mit der bezeichnung release_notes_v0.0.1.md in release_notes/
+git commit -m "Release v1.0.0: Initial version with major features"
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+```
+
 #### E) Testing PyPupilEXT using Podman
 
 1. **Build the Image**:

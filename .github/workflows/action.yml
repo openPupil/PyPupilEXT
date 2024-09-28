@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*.*.*" # Triggert bei Tags wie v1.0.0, v1.1.0, etc.
 
 jobs:
   build_wheels:
@@ -13,15 +15,26 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        python_version: ["3.9","3.10"]
+        python_version: ["3.9", "3.10"]
 
     steps:
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
       - name: Get latest Cmake and ninja (All-Systems)
         uses: lukka/get-cmake@latest
-
-      - name: Clone GitHub repository
-        run: |
-          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 
       - uses: knicknic/os-specific-run@v1.0.4
         with:
@@ -38,23 +51,10 @@ jobs:
             brew install libxcb
           linux: |
             echo "Starting on Linux"
+            sudo apt-get update
+            sudo apt-get install -y gcc g++ make cmake
           windows: |
             echo "Starting on Windows"
-
-      - name: Set up Python ${{ matrix.python_version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python_version }}
-
-      - name: Install python build requirements
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install wheel
-          python -m pip install numpy
-          python -m pip install setuptools
-          python -m pip install ninja
-          python -m pip install cmake
-          python -m pip install packaging
 
       - name: Restore artifacts, or setup vcpkg (All-Systems)
         uses: lukka/run-vcpkg@v10
@@ -66,11 +66,41 @@ jobs:
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
-          ls -l
           cd PyPupilEXT
-          python setup.py bdist_wheel
+          python setup.py sdist bdist_wheel
 
-      - name: Upload wheels
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: wheels-${{ matrix.os }}-${{ matrix.python_version }}
           path: PyPupilEXT/dist/
+
+  create_release:
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: "wheels-*"
+          path: dist/
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: release_notes/release_notes_${{ github.ref }}.md
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "dist/*"
+          asset_name: ${{ github.ref }}-$(basename ${{ runner.arch }}).whl
+          asset_content_type: application/zip
