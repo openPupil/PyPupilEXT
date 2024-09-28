@@ -147,6 +147,8 @@ setup(
     setup_requires=['wheel', 'cmake'],
     install_requires=[
         'numpy',
+        'pandas'
+        'matplotlib'
         'opencv-python'
     ],
     python_requires='>=3.7',
