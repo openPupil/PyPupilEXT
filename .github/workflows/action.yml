@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-    # Trigger nur bei einer bestimmten Commit-Nachricht
     paths-ignore:
-      - '**/*'
+      - 'docs/**'
     tags:
       - "v*.*.*"
-  workflow_dispatch: # Für manuelles Auslösen der Pipeline
+  workflow_dispatch:
 
 jobs:
   build_wheels:
