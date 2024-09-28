@@ -4,11 +4,16 @@ on:
   push:
     branches:
       - main
+    # Trigger nur bei einer bestimmten Commit-Nachricht
+    paths-ignore:
+      - '**/*'
     tags:
-      - "v*.*.*" # Triggert bei Tags wie v1.0.0, v1.1.0, etc.
+      - "v*.*.*"
+  workflow_dispatch: # Für manuelles Auslösen der Pipeline
 
 jobs:
   build_wheels:
+    if: contains(github.event.head_commit.message, '[build]')
     name: Build wheels on ${{ matrix.os }} for ${{ matrix.python_version }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
@@ -104,3 +109,12 @@ jobs:
           asset_path: "dist/*"
           asset_name: ${{ github.ref }}-$(basename ${{ runner.arch }}).whl
           asset_content_type: application/zip
+
+      # - name: Publish to PyPI
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   run: |
+      #     python -m pip install --upgrade twine
+      #     python -m twine upload dist/*
+      #   env:
+      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
