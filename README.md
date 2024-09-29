@@ -15,7 +15,7 @@ More information about our open-source pupillometry project can be found here: [
 
 **Contact:** Babak Zandi, Mail: zandi@lichttechnik.tu-darmstadt.de
 
-**Internal ToDo list**
+**Internal Todo list**
 
 \1) Automate the build process using GitHub Actions to provide universal wheel files. Comment: GitHub Actions currently does not work as it appears an error when using vcpkg. Need to be checked later.
 
@@ -113,8 +113,10 @@ git push origin v1.0.0
    podman run -it --memory=8g --shm-size=8g --arch amd64 ubuntu:22.04 /bin/bash
 
    apt-get update
+
    apt-get install -y wget git build-essential cmake g++ gcc make curl zip unzip tar pkg-config libopencv-dev ninja-build libeigen3-dev autoconf automake libtool bison gperf libx11 libxft-dev libxext-dev libegl1-mesa-dev libgles2-mesa-dev libxrandr-dev
    apt-get install -y libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxcomposite-dev libatk1.0-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev
+
    apt-get clean
 
    wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -135,7 +137,13 @@ git push origin v1.0.0
    podman images
 
    # Exit your current machine and start it again using image
-   podman run -it --memory=8g --shm-size=8 --arch amd64 ubuntu-base-image-x86_64 /bin/bash
+   podman run -it --memory=8g --shm-size=8 --arch amd64 ubuntu-base-image-x86_64 podman run -it --arch amd64 <container_name_or_id>
+   ```
+
+   Start existing container
+   ```
+   podman container ls
+   podman exec -it <container_name_or_id> /bin/bash
    ```
 
    cd PypupilEXT && cd build
