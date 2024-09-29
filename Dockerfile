@@ -81,4 +81,4 @@ RUN conda run --no-capture-output -n pypupilenv python setup.py bdist_wheel
 RUN conda run --no-capture-output -n pypupilenv pip install dist/*.whl
 
 # Default command to keep the container running with access to the conda environment
-CMD ["/bin/bash"]
+# CMD ["/bin/bash"]
