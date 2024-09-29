@@ -86,12 +86,13 @@ git push origin v1.0.0
 
 1. **Build the Image**:
    ```bash
-   podman build -t pypupil-ext .
+   podman build -t pypupilext .
    ```
 
-2. **Run the Container**:
+2. **Run and start the Container**:
    ```bash
-   podman run -it pypupil-ext
+   podman run -it pypupilext_container pypupilext
+   podman exec -it pypupilext_container /bin/bash
    ```
 
 3. **Activate the Conda Environment**:

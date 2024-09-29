@@ -1,5 +1,5 @@
 # Use an Ubuntu base image
-FROM ubuntu:22.04
+FROM --platform=linux/amd64 ubuntu:22.04
 
 # Set environment variables to avoid interaction
 ENV DEBIAN_FRONTEND=noninteractive
@@ -26,7 +26,7 @@ RUN apt-get update && \
     libtool \
     bison \
     gperf \
-    libx11 \
+    libx11-dev \
     libxft-dev \
     libxext-dev \
     libegl1-mesa-dev \
@@ -54,7 +54,7 @@ ENV LD_LIBRARY_PATH="/usr/lib/llvm-14/lib:${LD_LIBRARY_PATH}"
 
 
 # Install Miniconda with a reliable installation method
-RUN wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh && \
+RUN wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     chmod +x /tmp/miniconda.sh && \
     /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda && \
     rm /tmp/miniconda.sh
@@ -76,8 +76,9 @@ RUN bash
 RUN conda env create -f environment.yml
 
 # Activate the conda environment, build the package, and install the wheel file
-RUN conda run -n pypupilenv python setup.py bdist_wheel && \
-    conda run -n pypupilenv pip install dist/*.whl
+RUN conda run --no-capture-output -n pypupilenv python setup.py bdist_wheel
+
+RUN conda run --no-capture-output -n pypupilenv pip install dist/*.whl
 
 # Default command to keep the container running with access to the conda environment
 CMD ["/bin/bash"]
