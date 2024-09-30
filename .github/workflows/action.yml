@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest]
-        python_version: ["3.9", "3.10"]
+        python_version: ["3.9"]
+        #python_version: ["3.9", "3.10"]
 
     steps:
       - name: Set up Python ${{ matrix.python_version }}

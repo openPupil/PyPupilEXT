@@ -91,7 +91,10 @@ git push origin v1.0.0
 
 2. **Run and start the Container**:
    ```bash
-   podman run -it pypupilext_container pypupilext
+   # Create Continer and run it
+   podman run -it --name pypupilext_container localhost/pypupilext:latest
+   # If the Container already exists use these commands
+   podman start pypupilext_container
    podman exec -it pypupilext_container /bin/bash
    ```
 
@@ -103,8 +106,9 @@ git push origin v1.0.0
 
 4. **Run the Package or Tests**:
    You can now use the `PyPupilEXT` package within the activated conda environment:
-   ```bash
-   python -m pypupilext
+   ```python
+   import pypupilext as pp
+    # see examples
    ```
 
    #### D) Buidl the whl-file using podman
