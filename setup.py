@@ -153,5 +153,7 @@ setup(
     ],
     python_requires='>=3.7',
     include_package_data=True,
-    package_data={'pypupilext': ['*.so', '*.dylib']}
+    package_data={'': ['README.md'],
+                  'pypupilext': ['*.so', '*.dylib'],
+                  '': ['3rdparty/PupilEXT_Third_Party_Licenses/*']}
 )
