@@ -39,6 +39,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd PyPupilEXT
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
@@ -75,6 +76,7 @@ jobs:
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
+          ls -l
           cd PyPupilEXT
           python setup.py sdist bdist_wheel
 
