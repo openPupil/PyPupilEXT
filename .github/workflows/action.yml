@@ -28,10 +28,14 @@ jobs:
         with:
           python-version: ${{ matrix.python_version }}
 
-      - name: Check out repository
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
+      # - name: Check out repository
+      #   uses: actions/checkout@v2
+      #   with:
+      #     submodules: "recursive"
+
+      - name: Clone GitHub repository
+        run: |
+          git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 
       - name: Install dependencies
         run: |
@@ -71,6 +75,7 @@ jobs:
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
+          cd PyPupilEXT
           python setup.py sdist bdist_wheel
 
       - name: Upload Build Artifacts
