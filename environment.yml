@@ -6,6 +6,7 @@ dependencies:
   - numpy=1.26.4
   - matplotlib=3.8.4
   - pandas=2.2.2
+  - packaging=24.1
   - pip
   - pip:
       - opencv-python==4.10.0.84
