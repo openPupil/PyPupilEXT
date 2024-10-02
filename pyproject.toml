@@ -9,14 +9,6 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-[project]
-name = "PyPupilEXT"
-version = "0.0.1"
-authors = "Moritz Lode, Babak Zandi"
-description = "Pupil detection library for Python including algorithms and camera calibration routines."
-readme = "README.md"
-requires-python = ">=3.9, <3.11"
-
 [project.urls]
 Homepage = "https://github.com/openPupil/PyPupilEXT"
 Issues = "https://github.com/openPupil/PyPupilEXT/issues"
