@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos]
+        os: [ubuntu]
         python_version: ["3.10"]
         #python_version: ["3.9", "3.10"]
 
@@ -63,6 +63,10 @@ jobs:
             echo "Starting on Linux"
             sudo apt-get update
             sudo apt-get install -y gcc g++ make cmake
+            sudo apt-get install -y wget git build-essential curl zip unzip tar pkg-config libopencv-dev ninja-build autoconf \
+              automake libtool bison gperf libx11-dev libxft-dev libxext-dev libegl1-mesa-dev libgles2-mesa-dev libxrandr-dev \
+              libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxcomposite-dev libatk1.0-dev libcairo2-dev libpango1.0-dev \
+              libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev libomp5 libeigen3-dev
           windows: |
             echo "Starting on Windows"
 

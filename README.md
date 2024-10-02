@@ -1,4 +1,4 @@
-# PyPupilEXT: A pupil measurement software for python (under development)
+# PyPupilEXT: A pupil size detection software for python
 
 <p align="center">
     <img src="Misc/img/StartupAnim.gif" align="center" width="55%" height="20%">
