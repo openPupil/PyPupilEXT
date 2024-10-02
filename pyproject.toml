@@ -8,7 +8,3 @@ requires = [
     "opencv-python"
 ]
 build-backend = "setuptools.build_meta"
-
-[project.urls]
-Homepage = "https://github.com/openPupil/PyPupilEXT"
-Issues = "https://github.com/openPupil/PyPupilEXT/issues"
