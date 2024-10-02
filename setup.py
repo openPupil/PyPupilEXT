@@ -151,7 +151,7 @@ setup(
         'matplotlib',
         'opencv-python'
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.9, <3.11',
     include_package_data=True,
     package_data={'': ['README.md'],
                   'pypupilext': ['*.so', '*.dylib'],
