@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13]
+        os: [macos]
         python_version: ["3.9"]
         #python_version: ["3.9", "3.10"]
 
