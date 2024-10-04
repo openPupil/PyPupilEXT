@@ -76,7 +76,6 @@ jobs:
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
-          ls -l
           cd PyPupilEXT
           python setup.py sdist bdist_wheel
 
