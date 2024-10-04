@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'docs/**'
+      - "docs/**"
     tags:
       - "v*.*.*"
   workflow_dispatch:
@@ -72,7 +72,7 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
-          vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512"
+          #vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512"
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
