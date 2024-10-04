@@ -66,12 +66,6 @@ jobs:
           windows: |
             echo "Starting on Windows"
 
-      - name: Set up MinGW
-        if: matrix.os == 'windows'
-        uses: egor-tensin/setup-mingw@v2.2.0
-        with:
-          platform: x64
-
       - name: Restore artifacts, or setup vcpkg (All-Systems)
         uses: lukka/run-vcpkg@v10
         with:
