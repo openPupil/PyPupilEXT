@@ -73,7 +73,7 @@ jobs:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
           vcpkgJsonGlob: "**/vcpkg.json"
           runVcpkgInstall: false
-          vcpkgGitCommitId: 76d153790caf0592fce8fc4484aa6db18c7d00d4
+          vcpkgGitCommitId: 9558037875497b9db8cf38fcd7db68ec661bffe7
           #vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512" # runs well
 
       - name: update vcpkg version
