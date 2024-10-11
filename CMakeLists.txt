@@ -20,7 +20,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(PupilEXT)
 
-set(CMAKE_CXX_STANDARD 17)  # Ensure C++17 standard is used
+#set(CMAKE_CXX_STANDARD 17)  # Ensure C++17 standard is used
+set(CMAKE_CXX_STANDARD 14)
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
@@ -53,11 +54,11 @@ message("CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 message(STATUS "--------------------------------------------------------" )
 # ------------------------------------------------------------------------
 
-set(VCPKG_TARGET_TRIPLET $ENV{VCPKG_TARGET_TRIPLET} CACHE STRING "")
+#set(VCPKG_TARGET_TRIPLET $ENV{VCPKG_TARGET_TRIPLET} CACHE STRING "")
 
-if(NOT DEFINED ENV{VCPKG_TARGET_TRIPLET})
-    message(FATAL_ERROR "VCPKG_TARGET_TRIPLET environment variable is not set.")
-endif()
+#if(NOT DEFINED ENV{VCPKG_TARGET_TRIPLET})
+#    message(FATAL_ERROR "VCPKG_TARGET_TRIPLET environment variable is not set.")
+#endif()
 
 
 # The VCPKG_TARGET_TRIPLET should be commented out if you already set it during the cmake call in the settings.json
@@ -178,11 +179,11 @@ set(pybind11_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRI
 # ========================================================================
 # Using the find package commands ========================================
 # ========================================================================
-find_package(OpenCV CONFIG REQUIRED)
-find_package(Eigen3 CONFIG REQUIRED)
-find_package(Ceres CONFIG REQUIRED)
-find_package(glog CONFIG REQUIRED)
-find_package(pybind11 CONFIG REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(Ceres REQUIRED)
+find_package(glog REQUIRED)
+find_package(pybind11 REQUIRED)
 find_package(OpenMP)
 
 if(OpenMP_FOUND)
@@ -242,9 +243,9 @@ endif()
 # ========================================================================
 # Adjust include dirs ====================================================
 # ========================================================================
-set(Boost_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
-set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
-set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
+#set(Boost_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
+#set(EIGEN_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
+#set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include/")
 
 # ========================================================================
 # Build SPII - ===========================================================

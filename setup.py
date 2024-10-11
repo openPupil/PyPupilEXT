@@ -90,8 +90,8 @@ class CMakeBuild(build_ext):
             '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
             '-DVERSION_INFO={}'.format(self.distribution.get_version()),
             '-DCMAKE_BUILD_TYPE=Release',
-            '-DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake',
-            f'-DVCPKG_TARGET_TRIPLET={vcpkg_triplet}',
+            # '-DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake',
+            # f'-DVCPKG_TARGET_TRIPLET={vcpkg_triplet}',
             '-DPython_NumPy_INCLUDE_DIR={}'.format(np.get_include()),
             '-DTBB_TEST=OFF',
             '-DTBBMALLOC_BUILD=OFF',
@@ -125,10 +125,27 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        subprocess.check_call(['cmake', ext.sourcedir] +
-                              cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'] +
-                              build_args, cwd=self.build_temp)
+        # run conan profile detect --force before cmake call
+        subprocess.check_call(['conan', 'profile', 'detect',
+                              '--force'])
+
+        # run conan install . --output-folder=build --build=missing
+        subprocess.check_call(
+            ['conan', 'install', '.', '--build=missing'])
+
+        # create a shell script to run the necessary commands
+        with open('build/setup_conan.sh', 'w') as f:
+            f.write('cd build\n')
+            f.write('source conanbuild.sh\n')
+            f.write('cmake {} {}\n'.format(
+                ext.sourcedir, ' '.join(cmake_args)))
+            f.write('cmake --build . {}\n'.format(' '.join(build_args)))
+
+        # make the shell script executable
+        subprocess.check_call(['chmod', '+x', 'build/setup_conan.sh'])
+
+        # run the shell script
+        subprocess.check_call(['./build/setup_conan.sh'], env=env)
 
 
 vcpkg_triplet, osx_arch = get_system_architecture()

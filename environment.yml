@@ -10,3 +10,4 @@ dependencies:
   - pip
   - pip:
       - opencv-python==4.10.0.84
+      - conan
