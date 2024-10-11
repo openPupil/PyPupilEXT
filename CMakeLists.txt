@@ -254,7 +254,7 @@ if(APPLE)
 elseif(UNIX AND NOT APPLE)
     set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # Linux
 elseif(MSVC OR WIN32)
-    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/tbb.lib")  # Windows
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/spii.lib")  # Windows
 endif()
 
 if(APPLE)
@@ -273,7 +273,7 @@ ExternalProject_Add(Build_SPII
     LOG_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/log
     BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
     INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/install
-    CMAKE_ARGS ${TBB_CMAKE_ARGS}
+    CMAKE_ARGS ${SPII_CMAKE_ARGS}
     BUILD_BYPRODUCTS ${SPII_BUILD_BYPRODUCTS}
 )
 
