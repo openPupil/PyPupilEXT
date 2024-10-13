@@ -69,6 +69,7 @@ jobs:
 
       - name: Restore artifacts, or setup vcpkg (All-Systems)
         #uses: lukka/run-vcpkg@v10 # runs well
+        if: matrix.os == 'windows'
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
@@ -76,6 +77,15 @@ jobs:
           runVcpkgInstall: false
           vcpkgGitCommitId: 9558037875497b9db8cf38fcd7db68ec661bffe7
           #vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512" # runs well
+
+      - name: Restore artifacts, or setup vcpkg (All-Systems)
+        if: matrix.os == 'macos' || matrix.os == 'ubuntu'
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgDirectory: "${{ github.workspace }}/PyPupilEXT/3rdparty/vcpkg"
+          vcpkgJsonGlob: "**/vcpkg.json"
+          runVcpkgInstall: false
+          vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512"
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
