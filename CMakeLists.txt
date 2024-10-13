@@ -277,7 +277,7 @@ ExternalProject_Add(Build_SPII
     LOG_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/log
     BINARY_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/build
     INSTALL_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/install
-    CMAKE_ARGS ${SPII_CMAKE_ARGS}
+    CMAKE_ARGS ${TBB_CMAKE_ARGS}
     BUILD_BYPRODUCTS ${SPII_BUILD_BYPRODUCTS}
 )
 
