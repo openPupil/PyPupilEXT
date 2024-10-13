@@ -1,4 +1,4 @@
-# PyPupilEXT: A pupil size detection computer vision software for python
+# PyPupilEXT: Advanced pupil size detection using computer vision in python
 </div>
 <div align="center">
  <a href="https://github.com/openPupil/Open-PupilEXT" alt="Version">
