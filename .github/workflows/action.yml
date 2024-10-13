@@ -63,6 +63,9 @@ jobs:
               libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev libomp5 libeigen3-dev
           windows: |
             echo "Starting on Windows"
+            cd PyPupilEXT/3rdparty/vcpkg
+            git checkout master
+            git pull
 
       - name: Restore artifacts, or setup vcpkg (All-Systems)
         #uses: lukka/run-vcpkg@v10 # runs well
@@ -73,12 +76,6 @@ jobs:
           runVcpkgInstall: false
           vcpkgGitCommitId: 9558037875497b9db8cf38fcd7db68ec661bffe7
           #vcpkgGitCommitId: "e99d9a4facea9d7e15a91212364d7a12762b7512" # runs well
-
-      - name: update vcpkg version
-        run: | # this is an expertiment
-          cd PyPupilEXT/3rdparty/vcpkg
-          git checkout master
-          git pull
 
       - name: Build wheels for Python ${{ matrix.python_version }} in ${{ runner.os }}
         run: |
