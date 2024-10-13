@@ -250,11 +250,11 @@ set(CERES_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/build/vcpkg_installed/${VCPKG_TARG
 # Build SPII - ===========================================================
 # ========================================================================
 if(APPLE)
-    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # macOS
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/spii/build/lib/libspii.a")  # macOS
 elseif(UNIX AND NOT APPLE)
-    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/libspii.a")  # Linux
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/spii/build/lib/libspii.a")  # Linux
 elseif(MSVC OR WIN32)
-    set(SPII_BUILD_BYPRODUCTS "3rdparty/oneTBB/build/lib/spii.lib")  # Windows
+    set(SPII_BUILD_BYPRODUCTS "3rdparty/spii/build/lib/spii.lib")  # Windows
 endif()
 
 if(APPLE)
@@ -266,7 +266,7 @@ else()
 endif()
 
 ExternalProject_Add(Build_SPII
-    PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/soii
+    PREFIX ${PROJECT_SOURCE_DIR}/build/3rdparty/spii
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/spii
     TMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/tmp
     STAMP_DIR ${PROJECT_SOURCE_DIR}/build/3rdparty/spii/stamp
