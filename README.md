@@ -25,19 +25,19 @@ More information about our open-source pupillometry project can be found here: [
 
 ### 1.1 Install PyPupilEXT using pip
 
-Coming soon. Currently, you need to build your own wheel files to use PyPupilEXT (see next steps)
+This feature is forthcoming. Currently, users must compile their own wheel files to utilize PyPupilEXT (see below for instructions).
 
 ### 1.2 Build and install PyPupilEXT from source
 
-#### Step 1: Clone this repository with the included submodule.
+#### Step 1: Clone this repository including the submodules
 
 ```shell
 git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 ```
 
-The `--recurse-submodules` option is important, as vcpkg is a submodule. Without this option, the 3rdparty folder will not contain vcpkg packet manager.
+The `--recurse-submodules` option is vital as vcpkg is nested as a submodule. Without it, the 3rdparty folder will lack the vcpkg package manager.
 
-#### Step 2: Create a new python 3.9. environment on your machine using conda.
+#### Step 2: Set up a Python environment on your machine using conda
 
 ```shell
 cd PyPupilEXT
@@ -45,7 +45,7 @@ conda env create -f environment.yml
 conda activate pypupilenv
 ```
 
-#### Step 3: Build the wheel file from source and install the PyPupilEXT using pip.
+#### Step 3: Build and install an installation wheel from source via pip
 
 In PyPupilEXT, the pupil detection algorithms are included as C++ files. Therefore, it is necessary to load different C++ libraries to build the pupil detection algorithms. This process is fully automated with vcpkg. You only need to open the PyPupilEXT folder and call a one-liner. Note that the build process will take a while because the C++ libs need to be downloaded and compiled.
 
@@ -92,9 +92,9 @@ cd dist && pip install *.whl
 
 **Instruction for Windows**
 
-You need to install Visual Studio 2019. During the installation ``C++ MFC`` must be selected during the installation. Additionally, the English language package must be included. Visual Studio can be downloaded from the following page: https://visualstudio.microsoft.com/downloads/
+Visual Studio 2019 is required. During installation, ensure "Desktop development with C++" is selected along with the English language package. Visual Studio can be downloaded from [here](https://visualstudio.microsoft.com/downloads/).
 
-Open the app ``x64 Native Tools Command Prompt for VS 2024``on your machine. Next locate the PyPupilEXT folder from the command window and type in the follwing commands
+Launch the "x64 Native Tools Command Prompt for VS 2019." Then, navigate to the PyPupilEXT folder and input the following commands:
 
 ```shell
 cd PyPupilEXT
@@ -107,42 +107,67 @@ cd dist
 pip install <...filename.whl...>
 ```
 
-### 1.3 Build and install PyPupilEXT using a Podman or Docker Container (automatically)
+### 1.3 Build and Install PyPupilEXT Using Podman or Docker Container (Automated Process)
+
+Before starting, ensure you have Podman or Docker installed on your system. This automated method handles dependencies and builds the package in a containerized environment.
 
 #### Step 1: Build the Image
+
+Navigate to the PyPupilEXT directory and build the container image:
 
 ```bash
 cd PyPupilEXT
 podman build -t pypupilext .
-```
 
-#### Step 2: Run and start the Container
+# Alternatively, using Docker
+# docker build -t pypupilext .
+```
+This command creates a container image named `pypupilext` using the Dockerfile in the current directory.
+
+#### Step 2: Run and Start the Container
+
+Create and start a container instance from the image:
+
 ```bash
-# Create Continer and run it
+# Create a new container and run it interactively
 podman run -it --name pypupilext_container localhost/pypupilext:latest
 
-# Note: If the Container already exists use these commands
+# Alternatively, using Docker
+# docker run -it --name pypupilext_container pypupilext
+
+# Note: If the container already exists, use the following commands to start and access it
 podman start pypupilext_container
 podman exec -it pypupilext_container /bin/bash
+
+# For Docker
+# docker start pypupilext_container
+# docker exec -it pypupilext_container /bin/bash
 ```
+
+This process involves creating a container named `pypupilext_container`, starting it, and providing access to an interactive shell within the container environment.
 
 #### Step 3: Activate the Conda Environment
 
-Once inside the container, activate the conda environment
+After entering the container, you need to activate the preconfigured conda environment. This ensures that all necessary dependencies for PyPupilEXT are available:
 
 ```bash
 conda activate pypupilenv
 ```
 
-You can now use the `PyPupilEXT` package within the activated conda environment inside the container
+Once activated, you can utilize the `PyPupilEXT` package within this environment. For example, you can import and explore the package's functionalities:
+
 ```python
 import pypupilext as pp
-# see examples
+# Refer to example scripts for usage
 ```
 
-### 1.4 Build and install PyPupilEXT using a Podman or Docker Container (manually)
+### 1.4 Build and Install PyPupilEXT Using a Podman or Docker Container (Manual Setup)
 
-For testing purposes you can interactivley run a podman enviorment using:
+For users interested in a hands-on approach, or for testing custom configurations, you can manually set up a Podman or Docker environment with the following steps:
+
+#### Step 1: Start and Configure the Container
+
+Start a container using an Ubuntu base image and install essential development tools and dependencies:
 
 ```shell
 podman run -it --memory=8g --shm-size=8g --arch amd64 ubuntu:22.04 /bin/bash
@@ -154,50 +179,76 @@ apt-get install -y libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev l
 
 apt-get clean
 
+```
+
+#### Step 2: Install Miniconda
+
+Download and install Miniconda to manage Python environments effectively:
+
+```shell
 wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod +x /tmp/miniconda.sh
 /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda
 rm /tmp/miniconda.sh
+```
 
-PATH="/opt/miniconda/bin:$PATH"
+#### Step 3: Clone the PyPupilEXT Repository
+
+Retrieve the latest source code from the repository:
+
+```shell
 git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT.git /PyPupilEXT
-conda init
-bash
+```
 
-# Now save the podman image
+#### Step 4: Initialize Conda and Environment
+
+```shell
+conda init
+bash # Restart shell
+cd /PyPupilEXT
+conda env create -f environment.yml
+conda activate pypupilenv
+```
+
+#### Step 5: Build the Wheel and Install
+
+Compile the package into a Python wheel file and install it:
+
+```shell
+cd /PyPupilEXT
+python setup.py sdist bdist_wheel
+pip install dist/*.whl
+```
+
+#### Additional commands for Podman that might be usefull
+
+Save the podman image if you like
+
+```shell
 podman ps # Note the current image-id
 podman commit <container_id> ubuntu-base-image-x86_64
 
-# Now you can see the new image
+# You can check the available images using the command
 podman images
+```
 
-# Exit your current machine and start it again using image
+Start a container using an existing image
+
+```shell
 podman run -it --memory=8g --shm-size=8 --arch amd64 ubuntu-base-image-x86_64 podman run -it --arch amd64 <container_name_or_id>
 ```
 
-If you like to start the existing machine, you can use the following commands.
+If you like to switch to the container, you can use the following commands.
 
 ```shell
 podman container ls
 podman exec -it <container_name_or_id> /bin/bash
 ```
 
-Now you can build the *.wheel file using the follwing commands
-
-```shell
-cd PyPupilEXT
-conda env create -f environment.yml
-conda activate pypupilenv
-
-python setup.py sdist bdist_wheel
-
-cd dist && pip install <...filename.whl...>
-```
-
-
 Other usefull commands while building the *.whl file on ubuntu
+
 ```shell
-# Rmove the build folders
+# Clean up build directories for a fresh start
 rm -rf PyPupilEXT.egg-info .eggs build dist && mkdir build && cd build
 ```
 
