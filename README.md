@@ -1,8 +1,18 @@
-# PyPupilEXT: A pupil size detection software for python
+# PyPupilEXT: A pupil size detection computer vision software for python
+</div>
+<div align="center">
+ <a href="https://github.com/openPupil/Open-PupilEXT" alt="Version">
+        <img src="https://img.shields.io/badge/Python-3.9%20|%203.10-blue"/></a>
+ <a href="https://github.com/openPupil/Open-PupilEXT" alt="Version">
+        <img src="https://img.shields.io/badge/Version-0.0.1%20Beta-green"/></a>
+ <a href="https://github.com/openPupil/Open-PupilEXT" alt="Contribution">
+        <img src="https://img.shields.io/badge/PR-Welcome-green"/></a>
+</div>
 
 <p align="center">
     <img src="Misc/img/StartupAnim.gif" align="center" width="55%" height="20%">
   </p>
+
 
 This repository provides a python wrapper to the open-source pupillometry system PupilEXT ([Link](https://github.com/openPupil/)). The binding module is created using [Pybind11](https://github.com/pybind/pybind11). PyPupilEXT allows to measure the pupil diameter from images that were captured by stereo- and mono camera systems. The pupil diameter can be detected using one of the state-of-the-art open-source algorithms, Starburst [[1\]](#1), Swirski2D [[2\]](#2), ExCuSe [[3\]](#3), ElSe [[4\]](#4), PuRe [[5\]](#5), and PuReST [[6\]](#6).<br/>
 
@@ -11,28 +21,15 @@ The PyPupilEXT package is authored by Moritz Lode and Babak Zandi from the Techn
 
 More information about our open-source pupillometry project can be found here: [https://github.com/openPupil/Open-PupilEXT](https://github.com/openPupil/Open-PupilEXT)<br/>
 
-**Caution:** This project and its repository is under development and currently in an experimental stage.<br/>
-
-**Contact:** Babak Zandi, Mail: zandi@lichttechnik.tu-darmstadt.de
-
-**Internal Todo list**
-
-\1) Automate the build process using GitHub Actions to provide universal wheel files. Comment: GitHub Actions currently does not work as it appears an error when using vcpkg. Need to be checked later.
-
-\2) Integrate a test procedure with several examples, including stereo-matching.
-
-\3) Upload wheel files for macOS and Windows 10 to pip.
-
-\4)  Specify which python versions work with this package. Currently, only python 3.7 is tested.
-
 ## 1. Installation
-#### A) Install PyPupilEXT using pip
+
+### 1.1 Install PyPupilEXT using pip
 
 Coming soon. Currently, you need to build your own wheel files to use PyPupilEXT (see next steps)
 
-#### B) Use the following steps if the provided wheel files are not working
+### 1.2 Build and install PyPupilEXT from source
 
-**Step 1:** Clone this repository with the included submodule.
+#### Step 1: Clone this repository with the included submodule.
 
 ```shell
 git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
@@ -40,130 +37,171 @@ git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT
 
 The `--recurse-submodules` option is important, as vcpkg is a submodule. Without this option, the 3rdparty folder will not contain vcpkg packet manager.
 
-**Step 2:** Create a new python 3.9. environment on your machine using conda.
+#### Step 2: Create a new python 3.9. environment on your machine using conda.
 
 ```shell
 cd PyPupilEXT
 conda env create -f environment.yml
+conda activate pypupilenv
 ```
 
-**Step 3:** Create a wheel file from the source code to pip install the library.
+#### Step 3: Build the wheel file from source and install the PyPupilEXT using pip.
 
 In PyPupilEXT, the pupil detection algorithms are included as C++ files. Therefore, it is necessary to load different C++ libraries to build the pupil detection algorithms. This process is fully automated with vcpkg. You only need to open the PyPupilEXT folder and call a one-liner. Note that the build process will take a while because the C++ libs need to be downloaded and compiled.
 
+The PupilEXT project contains a vcpkg.json file in which all the required C++ libraries are defined. To download and build the libraries, we use the package management software vcpkg (https://vcpkg.io/en/index.html). We have placed the vcpkg GitHub repository as a submodule under 3rdparty/vcpkg, meaning that the required libraries will be downloaded automatically to the PupilEXT project folder, regardless of your system. This has the advantage that the PupilEXT folder can be easily deleted when the C++ libraries are no longer needed. However, as the libraries are downloaded and built, care must be taken to ensure that at least 6 GB are available on the disc for the PupilEXT folder (on windows ~13 GB).
+
+**Instruction for macOS (Apple Silicon & Intel)**
+
+Follow step 1 & 2. Next, make sure to install homebrew before running these commands.
+
 ```shell
-conda activate pypupilenv
+brew install pkg-config
+brew install cmake
+brew install nasm
+brew install gcc
+brew install llvm
+brew install libomp
+brew install libmpc
+brew install tree
+brew install libxcb
+
 python setup.py sdist bdist_wheel
 ```
-
-Then, in the folder ``PyPupilEXT/dist``, there should be a new *.whl file, which is on a mac machine, for example ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``. This file can be used to install the python package. For this, locate the dist folder and pip install it. If you experience any platform compability error, then you need to rename the file ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``to ``PyPupilEXT-0.0.1-cp37-none-any.whl``
+Then, in the folder ``PyPupilEXT/dist``, there should be a new *.whl file, which is on a mac machine, for example ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``. This file can be used to install the python package. For this, locate the dist folder and pip install it. If you experience any platform compability error, then you need to rename the file ``PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl``to ``PyPupilEXT-0.0.1-cp37-none-any.whl`
 
 ```shell
-cd dist
-pip install PyPupilEXT-0.0.1-cp37-cp37m-macosx_10_15_x86_64.whl
+cd dist && pip install *.whl
 ```
 
-Now you can use the PyPupilEXT package in Python and proceed with the examples provided section two.
+**Instruction for Ubuntu**
 
-#### Create relase in GithUb
+Follow step 1 & 2. Next, make sure to install the necessary libs before running the build process.
 
-Example:
+```shell
+sudo apt-get update
+sudo apt-get install -y gcc g++ make cmake
+sudo apt-get install -y wget git build-essential curl zip unzip tar pkg-config libopencv-dev ninja-build autoconf \
+    automake libtool bison gperf libx11-dev libxft-dev libxext-dev libegl1-mesa-dev libgles2-mesa-dev libxrandr-dev \
+    libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxcomposite-dev libatk1.0-dev libcairo2-dev libpango1.0-dev \
+    libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev libomp5 libeigen3-dev
 
-Change the version number inside the following files:
-- Create a new file in the folder realese_notes, conataining the notes.
-- Change the version in the file setup.py
-- Change `body_path: release_notes/release_notes_v0.0.1.md`` in .github/workflows/action.yml
+python setup.py sdist bdist_wheel
+cd dist && pip install *.whl
+```
+
+**Instruction for Windows**
+
+You need to install Visual Studio 2019. During the installation ``C++ MFC`` must be selected during the installation. Additionally, the English language package must be included. Visual Studio can be downloaded from the following page: https://visualstudio.microsoft.com/downloads/
+
+Open the app ``x64 Native Tools Command Prompt for VS 2024``on your machine. Next locate the PyPupilEXT folder from the command window and type in the follwing commands
+
+```shell
+cd PyPupilEXT
+conda env create -f environment.yml
+conda activate pypupilenv
+
+python setup.py sdist bdist_wheel
+
+cd dist
+pip install <...filename.whl...>
+```
+
+### 1.3 Build and install PyPupilEXT using a Podman or Docker Container (automatically)
+
+#### Step 1: Build the Image
 
 ```bash
-# Hinzufügen einer Datei mit der bezeichnung release_notes_v0.0.1.md in release_notes/
-git commit -m "Release v1.0.0: Initial version with major features"
-git tag -a v1.0.0 -m "Release version 1.0.0"
-git push origin v1.0.0
+cd PyPupilEXT
+podman build -t pypupilext .
+```
+
+#### Step 2: Run and start the Container
+```bash
+# Create Continer and run it
+podman run -it --name pypupilext_container localhost/pypupilext:latest
+
+# Note: If the Container already exists use these commands
+podman start pypupilext_container
+podman exec -it pypupilext_container /bin/bash
+```
+
+#### Step 3: Activate the Conda Environment
+
+Once inside the container, activate the conda environment
+
+```bash
+conda activate pypupilenv
+```
+
+You can now use the `PyPupilEXT` package within the activated conda environment inside the container
+```python
+import pypupilext as pp
+# see examples
+```
+
+### 1.4 Build and install PyPupilEXT using a Podman or Docker Container (manually)
+
+For testing purposes you can interactivley run a podman enviorment using:
+
+```shell
+podman run -it --memory=8g --shm-size=8g --arch amd64 ubuntu:22.04 /bin/bash
+
+apt-get update
+
+apt-get install -y wget git build-essential cmake g++ gcc make curl zip unzip tar pkg-config libopencv-dev ninja-build libeigen3-dev autoconf automake libtool bison gperf libx11 libxft-dev libxext-dev libegl1-mesa-dev libgles2-mesa-dev libxrandr-dev
+apt-get install -y libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxcomposite-dev libatk1.0-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev
+
+apt-get clean
+
+wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x /tmp/miniconda.sh
+/bin/bash /tmp/miniconda.sh -b -p /opt/miniconda
+rm /tmp/miniconda.sh
+
+PATH="/opt/miniconda/bin:$PATH"
+git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT.git /PyPupilEXT
+conda init
+bash
+
+# Now save the podman image
+podman ps # Note the current image-id
+podman commit <container_id> ubuntu-base-image-x86_64
+
+# Now you can see the new image
+podman images
+
+# Exit your current machine and start it again using image
+podman run -it --memory=8g --shm-size=8 --arch amd64 ubuntu-base-image-x86_64 podman run -it --arch amd64 <container_name_or_id>
+```
+
+If you like to start the existing machine, you can use the following commands.
+
+```shell
+podman container ls
+podman exec -it <container_name_or_id> /bin/bash
+```
+
+Now you can build the *.wheel file using the follwing commands
+
+```shell
+cd PyPupilEXT
+conda env create -f environment.yml
+conda activate pypupilenv
+
+python setup.py sdist bdist_wheel
+
+cd dist && pip install <...filename.whl...>
 ```
 
 
-#### E) Testing PyPupilEXT using Podman
+Other usefull commands while building the *.whl file on ubuntu
+```shell
+# Rmove the build folders
+rm -rf PyPupilEXT.egg-info .eggs build dist && mkdir build && cd build
+```
 
-1. **Build the Image**:
-   ```bash
-   podman build -t pypupilext .
-   ```
-
-2. **Run and start the Container**:
-   ```bash
-   # Create Continer and run it
-   podman run -it --name pypupilext_container localhost/pypupilext:latest
-   # If the Container already exists use these commands
-   podman start pypupilext_container
-   podman exec -it pypupilext_container /bin/bash
-   ```
-
-3. **Activate the Conda Environment**:
-   Once inside the container, activate the conda environment:
-   ```bash
-   conda activate pypupilenv
-   ```
-
-4. **Run the Package or Tests**:
-   You can now use the `PyPupilEXT` package within the activated conda environment:
-   ```python
-   import pypupilext as pp
-    # see examples
-   ```
-
-   #### D) Buidl the whl-file using podman
-   For testing purposes you can interactivley run a podman enviorment using:
-
-   ````shell
-   podman run -it --memory=8g --shm-size=8g --arch amd64 ubuntu:22.04 /bin/bash
-
-   apt-get update
-
-   apt-get install -y wget git build-essential cmake g++ gcc make curl zip unzip tar pkg-config libopencv-dev ninja-build libeigen3-dev autoconf automake libtool bison gperf libx11 libxft-dev libxext-dev libegl1-mesa-dev libgles2-mesa-dev libxrandr-dev
-   apt-get install -y libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libxcomposite-dev libatk1.0-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev libxdamage-dev nasm libomp-dev
-
-   apt-get clean
-
-   wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-   chmod +x /tmp/miniconda.sh
-   /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda
-   rm /tmp/miniconda.sh
-
-   PATH="/opt/miniconda/bin:$PATH"
-   git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT.git /PyPupilEXT
-   conda init
-   bash
-
-   # Now save the podman image
-   podman ps # Note the current image-id
-   podman commit <container_id> ubuntu-base-image-x86_64
-
-   # Now you can see the new image
-   podman images
-
-   # Exit your current machine and start it again using image
-   podman run -it --memory=8g --shm-size=8 --arch amd64 ubuntu-base-image-x86_64 podman run -it --arch amd64 <container_name_or_id>
-   ```
-
-   Start existing container
-   ```
-   podman container ls
-   podman exec -it <container_name_or_id> /bin/bash
-   ```
-
-   cd PypupilEXT && cd build
-
-   # Other triplets: arm64-linux, arm-linux, x64-linux
-   # For more see here: https://github.com/microsoft/vcpkg/tree/e99d9a4facea9d7e15a91212364d7a12762b7512/triplets
-   cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -DCMAKE_TOOLCHAIN_FILE=3rdparty/vcpkg/scripts/buildsystems/vcpkg.cmake
-
-
-   Other important commands while building the *.whl file on ubuntu
-   ```shell
-   rm -rf PyPupilEXT.egg-info .eggs build dist && mkdir build && cd build # Rmove these folders
-   ```
-
-#### D) The advanced way of installing PyPupilEXT if nothing works
+### 1.5 The advanced way of installing PyPupilEXT when nothing works
 
 If the build process fails, it may be due to the setup.py file. In such a case, it could be useful to compile the C++ files manually. Firstly, you need to find the path to the C++ NumPy header, which is necessary during the compilation. For this, type the following in your shell
 
@@ -211,7 +249,7 @@ Then, go to the ``PyPupilEXT/build`` folder and copy the ``_pypupil.cpython-37m-
 python -m pip install . -v
 ```
 
-## 2. How to use PyPupilEXT (under construction)
+## 2. Examples: How to use PyPupilEXT (under construction)
 
 PyPupilEXT contains the pupil detection algorithms Starburst [[1\]](#1), Swirski2D [[2\]](#2), ExCuSe [[3\]](#3), ElSe [[4\]](#4), PuRe [[5\]](#5), and PuReST [[6\]](#6). Each algorithm is implemented using the PupilDetectionMethod interface, exposing the function ``run`` and ``runWithConfidence`` for pupil detection on an image. The method ``runWithConfidence`` additionally applies an outline confidence measure in the range of [0, 1] on the pupil detection, accessible by the field pupil.outline_confidence.
 
@@ -504,8 +542,23 @@ Parameters:
 
 Physical pupil size, float
 
+## 4. Developer Notes: Create relase in GithUb
 
-## 4. Citation
+Example:
+
+Change the version number inside the following files:
+- Create a new file in the folder realese_notes, conataining the notes.
+- Change the version in the file setup.py
+- Change `body_path: release_notes/release_notes_v0.0.1.md`` in .github/workflows/action.yml
+
+```bash
+# Hinzufügen einer Datei mit der bezeichnung release_notes_v0.0.1.md in release_notes/
+git commit -m "Release v1.0.0: Initial version with major features"
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+```
+
+## 5. Citation
 Please consider to cite our work if you find this repository  useful for your research:
 
 B. Zandi, M. Lode, A. Herzog, G. Sakas, and T. Q. Khanh, “PupilEXT: Flexible Open-Source Platform for High-Resolution Pupillometry in Vision Research,” Front. Neurosci., vol. 15, Jun. 2021, doi: 10.3389/fnins.2021.676220.
