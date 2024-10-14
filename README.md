@@ -25,7 +25,7 @@ More information about our open-source pupillometry project can be found here: [
 
 ### 1.1 Install PyPupilEXT using pip (Recommended)
 
-To install PyPupilEXT using the wheel files, visit the [releases page](https://github.com/openPupil/Open-PupilEXT/releases) of the repository and download the appropriate wheel (.whl) file for your operating system and Python version. Next, open your terminal or command prompt and navigate to the directory where you downloaded the wheel file.
+To install PyPupilEXT using the wheel files, visit the [releases page](https://github.com/openPupil/PyPupilEXT/releases) of the repository and download the appropriate wheel (.whl) file for your operating system and Python version. Next, open your terminal or command prompt and navigate to the directory where you downloaded the wheel file.
 
 Run the following command to create a new environment named `pypupilenv` with Python 3.10:
 ```shell
