@@ -23,9 +23,31 @@ More information about our open-source pupillometry project can be found here: [
 
 ## 1. Installation
 
-### 1.1 Install PyPupilEXT using pip
+### 1.1 Install PyPupilEXT using pip (Recommended)
 
-This feature is forthcoming. Currently, users must compile their own wheel files to utilize PyPupilEXT (see below for instructions).
+To install PyPupilEXT using the wheel files, visit the [releases page](https://github.com/openPupil/Open-PupilEXT/releases) of the repository and download the appropriate wheel (.whl) file for your operating system and Python version. Next, open your terminal or command prompt and navigate to the directory where you downloaded the wheel file.
+
+Run the following command to create a new environment named `pypupilenv` with Python 3.10:
+```shell
+conda create -n pypupilenv python=3.10
+conda activate pypupilenv
+
+conda install numpy=1.26.4 matplotlib=3.8.4 pandas=2.2.2
+pip install opencv-python==4.10.0.84
+```
+
+Run the following command, replacing `<filename>` with the actual name of the wheel file:
+
+```shell
+# On macOS with Apple Silicon using Python 3.10
+pip install PyPupilEXT-0.0.1-cp310-cp310-macosx_14_0_universal2.whl
+
+# On Ubuntu using Python 3.10
+pip install PyPupilEXT-0.0.1-cp310-cp310-linux_x86_64.whl
+
+# On Windows using Python 3.10
+pip install PyPupilEXT-0.0.1-cp310-cp310-win_amd64.whl
+```
 
 ### 1.2 Build and install PyPupilEXT from source
 
@@ -165,11 +187,9 @@ import pypupilext as pp
 
 For users interested in a hands-on approach, or for testing custom configurations, you can manually set up a Podman or Docker environment with the following steps:
 
-#### Step 1: Start and Configure the Container
-
-Start a container using an Ubuntu base image and install essential development tools and dependencies:
-
 ```shell
+#### Step 1: Start and Configure the Container
+# Start a container using an Ubuntu base image and install essential development tools and dependencies:
 podman run -it --memory=8g --shm-size=8g --arch amd64 ubuntu:22.04 /bin/bash
 
 apt-get update
@@ -179,46 +199,31 @@ apt-get install -y libglib2.0-dev libxrandr-dev libxcursor-dev libxinerama-dev l
 
 apt-get clean
 
-```
-
 #### Step 2: Install Miniconda
-
-Download and install Miniconda to manage Python environments effectively:
-
-```shell
+# Download and install Miniconda to manage Python environments effectively:
 wget -O /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod +x /tmp/miniconda.sh
 /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda
 rm /tmp/miniconda.sh
-```
 
 #### Step 3: Clone the PyPupilEXT Repository
-
-Retrieve the latest source code from the repository:
-
-```shell
+# Retrieve the latest source code from the repository:
 git clone --recurse-submodules https://github.com/openPupil/PyPupilEXT.git /PyPupilEXT
-```
 
 #### Step 4: Initialize Conda and Environment
-
-```shell
 conda init
 bash # Restart shell
 cd /PyPupilEXT
 conda env create -f environment.yml
 conda activate pypupilenv
-```
 
 #### Step 5: Build the Wheel and Install
-
-Compile the package into a Python wheel file and install it:
-
-```shell
+# Compile the package into a Python wheel file and install it:
 cd /PyPupilEXT
 python setup.py sdist bdist_wheel
 pip install dist/*.whl
 ```
+
 
 #### Additional commands for Podman that might be usefull
 
@@ -252,7 +257,7 @@ Other usefull commands while building the *.whl file on ubuntu
 rm -rf PyPupilEXT.egg-info .eggs build dist && mkdir build && cd build
 ```
 
-### 1.5 The advanced way of installing PyPupilEXT when nothing works
+### 1.5 The advanced way of installing PyPupilEXT when nothing works (not recommended!)
 
 If the build process fails, it may be due to the setup.py file. In such a case, it could be useful to compile the C++ files manually. Firstly, you need to find the path to the C++ NumPy header, which is necessary during the compilation. For this, type the following in your shell
 
