@@ -98,6 +98,21 @@ Then, in the folder ``PyPupilEXT/dist``, there should be a new *.whl file, which
 cd dist && pip install *.whl
 ```
 
+!! Note !! Do not use the pypupilext lib inside a folder labeld in the same way (e.g. pypupilext/), otherwise you will reiceive the follwing error
+```shell
+Failed to import _pypupil module: No module named 'pypupilext._pypupil'
+Traceback (most recent call last):
+  File "/PyPupilEXT/pypupilext/__init__.py", line 23, in <module>
+    from ._pypupil import *
+ModuleNotFoundError: No module named 'pypupilext._pypupil'
+Current directory contents: ['__init__.py', 'single_calibration.py', 'stereo_calibration.py', '__pycache__']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/PyPupilEXT/pypupilext/__init__.py", line 23, in <module>
+    from ._pypupil import *
+ModuleNotFoundError: No module named 'pypupilext._pypupil'
+```
+
 **Instruction for Ubuntu**
 
 Follow step 1 & 2. Next, make sure to install the necessary libs before running the build process.
@@ -112,6 +127,21 @@ sudo apt-get install -y wget git build-essential curl zip unzip tar pkg-config l
 
 python setup.py sdist bdist_wheel
 cd dist && pip install *.whl
+```
+
+!! Note !! Do not use the pypupilext lib inside a folder labeld in the same way (e.g. pypupilext/), otherwise you will reiceive the follwing error
+```shell
+Failed to import _pypupil module: No module named 'pypupilext._pypupil'
+Traceback (most recent call last):
+  File "/PyPupilEXT/pypupilext/__init__.py", line 23, in <module>
+    from ._pypupil import *
+ModuleNotFoundError: No module named 'pypupilext._pypupil'
+Current directory contents: ['__init__.py', 'single_calibration.py', 'stereo_calibration.py', '__pycache__']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/PyPupilEXT/pypupilext/__init__.py", line 23, in <module>
+    from ._pypupil import *
+ModuleNotFoundError: No module named 'pypupilext._pypupil'
 ```
 
 **Instruction for Windows**
@@ -183,6 +213,21 @@ Once activated, you can utilize the `PyPupilEXT` package within this environment
 ```python
 import pypupilext as pp
 # Refer to example scripts for usage
+```
+
+!! Note !! Do not use the pypupilext lib inside a folder labeld in the same way (e.g. pypupilext/), otherwise you will reiceive the follwing error
+```shell
+Failed to import _pypupil module: No module named 'pypupilext._pypupil'
+Traceback (most recent call last):
+  File "/PyPupilEXT/pypupilext/__init__.py", line 23, in <module>
+    from ._pypupil import *
+ModuleNotFoundError: No module named 'pypupilext._pypupil'
+Current directory contents: ['__init__.py', 'single_calibration.py', 'stereo_calibration.py', '__pycache__']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/PyPupilEXT/pypupilext/__init__.py", line 23, in <module>
+    from ._pypupil import *
+ModuleNotFoundError: No module named 'pypupilext._pypupil'
 ```
 
 ### 1.4 Build and Install PyPupilEXT Using a Podman or Docker Container (Manual Setup)
