@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="Misc/img/Logo.png" width="70%" height="25%">
+  <img src="Misc/img/Logo-PyPupilEXT.png" width="70%" height="25%">
 </div><br/>
 <div align="center">
  <a href="https://github.com/openPupil/Open-PupilEXT" alt="Version">
