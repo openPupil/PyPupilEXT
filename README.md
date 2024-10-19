@@ -1,5 +1,6 @@
-# PyPupilEXT: Advanced pupil size detection using computer vision in python
-</div>
+<div align="center">
+  <img src="Misc/img/Logo.png" width="70%" height="25%">
+</div><br/>
 <div align="center">
  <a href="https://github.com/openPupil/Open-PupilEXT" alt="Version">
         <img src="https://img.shields.io/badge/Python-3.9%20|%203.10-blue"/></a>
@@ -13,6 +14,7 @@
     <img src="Misc/img/StartupAnim.gif" align="center" width="55%" height="20%">
   </p>
 
+# PyPupilEXT: Advanced pupil size detection using computer vision in python
 
 This repository provides a python wrapper to the open-source pupillometry system PupilEXT ([Link](https://github.com/openPupil/)). The binding module is created using [Pybind11](https://github.com/pybind/pybind11). PyPupilEXT allows to measure the pupil diameter from images that were captured by stereo- and mono camera systems. The pupil diameter can be detected using one of the state-of-the-art open-source algorithms, Starburst [[1\]](#1), Swirski2D [[2\]](#2), ExCuSe [[3\]](#3), ElSe [[4\]](#4), PuRe [[5\]](#5), and PuReST [[6\]](#6).<br/>
 
