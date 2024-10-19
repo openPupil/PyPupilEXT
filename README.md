@@ -1,6 +1,6 @@
 <div align="center">
   <img src="Misc/img/Logo.png" width="70%" height="25%">
-</div><br/>
+</div>
 <div align="center">
  <a href="https://github.com/openPupil/Open-PupilEXT" alt="Version">
         <img src="https://img.shields.io/badge/Python-3.9%20|%203.10-blue"/></a>
